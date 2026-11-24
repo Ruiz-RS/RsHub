@@ -354,8 +354,8 @@ Filename: "{app}\{#AppExe}"; Description: "{cm:RunApp}"; Flags: nowait postinsta
 Filename: "{#AppUrl}/releases/tag/v{#AppVersion}"; Description: "{cm:RunNotes,{#AppVersion}}"; Flags: shellexec nowait postinstall skipifsilent runasoriginaluser unchecked
 
 [UninstallRun]
-Filename: "{app}\{#AppExe}"; Parameters: "--quit"; RunOnceId: "CloseRsHub"; Flags: runhidden waituntilterminated
-Filename: "{app}\{#AppExe}"; Parameters: "--uninstall-cleanup"; RunOnceId: "CleanupRsHub"; Flags: runhidden waituntilterminated
+Filename: "{app}\{#AppExe}"; Parameters: "--quit"; RunOnceId: "CloseRsHub"; Flags: runhidden waituntilterminated skipifdoesntexist
+Filename: "{app}\{#AppExe}"; Parameters: "--uninstall-cleanup"; RunOnceId: "CleanupRsHub"; Flags: runhidden waituntilterminated skipifdoesntexist
 
 [UninstallDelete]
 ; what the updater downloaded, and the interface cache (rebuilt on demand); settings are only removed if the user

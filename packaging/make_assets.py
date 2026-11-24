@@ -62,26 +62,11 @@ def _font(size, weight):
 
 
 def wizard_large(w, h):
-    """Welcome and finish pages: the planet large, faint orbits around it, the name below."""
-    k = 2  # drawn at twice the size, then scaled down: smooth orbit lines
+    """Welcome and finish pages: the RS emblem centered, pure starry deep space, the name below."""
+    k = 2  # drawn at twice the size, then scaled down: smooth lines
     W, H = w * k, h * k
     img = _space(W, H, seed=7)
     cx, cy = W * .5, H * .38
-    orbits = Image.new("L", (W, H), 0)
-    od = ImageDraw.Draw(orbits)
-    lw = max(1, round(W / 202 * 1.1))
-    for rx, ry, a in ((.62, .19, 60), (.86, .27, 40), (1.18, .37, 26)):
-        od.ellipse((cx - W * rx, cy - W * ry, cx + W * rx, cy + W * ry), outline=a, width=lw)
-    orbits = orbits.rotate(20, resample=Image.BICUBIC, center=(cx, cy))
-    layer = Image.new("RGBA", (W, H), ICE + (0,))
-    layer.putalpha(orbits)
-    img = Image.alpha_composite(img, layer)
-    # a small coral moon on the inner orbit, lower left
-    md = ImageDraw.Draw(img)
-    t, a = math.radians(130), math.radians(20)
-    ox, oy = W * (.62 - .0055) * math.cos(t), W * (.19 - .0055) * math.sin(t)
-    mx, my, mr = cx + ox * math.cos(a) + oy * math.sin(a), cy - ox * math.sin(a) + oy * math.cos(a), W * .018
-    md.ellipse((mx - mr, my - mr, mx + mr, my + mr), fill=(255, 196, 182, 230))
     halo = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     r = W * .3
     ImageDraw.Draw(halo).ellipse((cx - r, cy - r, cx + r, cy + r), fill=CORAL + (50,))
@@ -107,7 +92,7 @@ def wizard_small(size):
 
 
 def wizard_back(w, h):
-    """Background of every wizard page: the app's navy, barely-there stars and glows, one faint orbit. Kept dark and
+    """Background of every wizard page: the app's navy, barely-there stars and glows. Kept dark and
     quiet so text and checkboxes stay easy to read on top of it."""
     m = Image.linear_gradient("L").resize((w, h), Image.BICUBIC)
     img = Image.composite(Image.new("RGBA", (w, h), (6, 10, 20, 255)), Image.new("RGBA", (w, h), (11, 18, 36, 255)), m)
@@ -116,17 +101,6 @@ def wizard_back(w, h):
         r = w * gr
         ImageDraw.Draw(glow).ellipse((w * gx - r, h * gy - r, w * gx + r, h * gy + r), fill=col + (alpha,))
         img = Image.alpha_composite(img, glow.filter(ImageFilter.GaussianBlur(r * .5)))
-    k = 2  # the orbit is drawn at twice the size for a smooth line
-    orbit = Image.new("L", (w * k, h * k), 0)
-    ox, oy, rx, ry, a = w * k * .98, h * k * 1.02, w * k * .62, h * k * .3, math.radians(14)
-    pts = [(ox + rx * math.cos(t) * math.cos(a) + ry * math.sin(t) * math.sin(a),
-            oy - rx * math.cos(t) * math.sin(a) + ry * math.sin(t) * math.cos(a))
-           for t in (i * math.pi / 180 for i in range(361))]
-    ImageDraw.Draw(orbit).line(pts, fill=24, width=max(1, round(k * w / 596)))
-    orbit = orbit.resize((w, h), Image.LANCZOS)
-    layer = Image.new("RGBA", (w, h), ICE + (0,))
-    layer.putalpha(orbit)
-    img = Image.alpha_composite(img, layer)
     rnd = random.Random(5)
     stars = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     sd = ImageDraw.Draw(stars)
