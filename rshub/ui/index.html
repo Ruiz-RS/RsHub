@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="deep">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RsHub</title>
+<link rel="icon" href="img/logo_emblem.png">
+<style>
+/* loading screen: on the very first paint, before the stylesheets and scripts, gone once the app is ready (shell.js) */
+#boot{display:none !important}
+#boot.out{opacity:0;pointer-events:none}
+#boot .bt{display:flex;flex-direction:column;align-items:center;gap:18px}
+#boot svg{width:84px;height:84px;overflow:visible;filter:drop-shadow(0 0 22px rgba(255,122,102,.28))}
+#boot .moon{transform-origin:12px 12.6px;animation:btOrbit 2.6s linear infinite}
+#boot .planet{transform-origin:12px 12.6px;animation:btBreath 2.6s ease-in-out infinite}
+#boot b{font:600 19px/1 system-ui,"Segoe UI",sans-serif;letter-spacing:-.01em}
+#boot .bar{position:relative;width:150px;height:3px;border-radius:2px;background:rgba(232,238,248,.08);overflow:hidden}
+#boot .bar i{position:absolute;top:0;bottom:0;width:38%;border-radius:2px;background:linear-gradient(90deg,#FFFFFF,#00F0D0);animation:btBar 1.3s ease-in-out infinite}
+#boot .msg{min-height:18px;max-width:320px;text-align:center;color:rgba(232,238,248,.55);font-size:12.5px;transition:opacity .3s}
+@keyframes btOrbit{to{transform:rotate(360deg)}}
+@keyframes btBreath{50%{transform:scale(1.06)}}
+@keyframes btBar{from{left:-38%}to{left:100%}}
+@media (prefers-reduced-motion:reduce){#boot .moon,#boot .planet{animation:none}#boot .bar i{animation:none;left:0;width:100%;opacity:.5}}
+</style>
+<link rel="preload" href="fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/sheet.css">
+<link rel="stylesheet" href="css/home/bento.css">
+<link rel="stylesheet" href="css/home/model3d.css">
+<link rel="stylesheet" href="css/modules/monitor.css">
+<link rel="stylesheet" href="css/modules/drivers.css">
+<link rel="stylesheet" href="css/modules/remover.css">
+<link rel="stylesheet" href="css/modules/updater.css">
+<link rel="stylesheet" href="css/modules/storage.css">
+<link rel="stylesheet" href="css/modules/optimizer.css">
+<link rel="stylesheet" href="css/modules/tester.css">
+<link rel="stylesheet" href="css/modules/autopilot.css">
+<link rel="stylesheet" href="css/modules/hangar.css">
+<link rel="stylesheet" href="css/modules/privacy.css">
+<link rel="stylesheet" href="css/modules/benchmark.css">
+<link rel="stylesheet" href="css/backups.css">
+<link rel="stylesheet" href="css/selfupdate.css">
+<link rel="stylesheet" href="css/gamepad.css">
+</head>
+<body>
+<div id="boot" aria-busy="true"><div class="bt">
+  <img src="img/logo_emblem.png" class="boot-logo" alt="RsHub" style="width:36px;height:36px;object-fit:contain;margin-bottom:8px">
+  <b>RsHub</b><div class="bar"><i></i></div><div class="msg" id="bootMsg"></div></div></div>
+<div class="rz" data-edge="n"></div><div class="rz" data-edge="s"></div><div class="rz" data-edge="w"></div><div class="rz" data-edge="e"></div>
+<div class="rz" data-edge="nw"></div><div class="rz" data-edge="ne"></div><div class="rz" data-edge="sw"></div><div class="rz" data-edge="se"></div>
+<div class="atmo"></div>
+<canvas id="stars"></canvas>
+
+<header class="top">
+  <div class="brand" id="brand" title="Go Home">
+    <img src="img/logo_emblem.png" class="logo-emblem" alt="RsHub" style="width:30px;height:30px;object-fit:contain;image-rendering:-webkit-optimize-contrast;">
+    RsHub
+  </div>
+  <button class="search" id="searchBtn" aria-label="Search" data-t-attr="aria-label">
+    <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+    <span data-t>Search for a tool or action</span>
+    <span class="kbd">Ctrl K</span>
+  </button>
+  <div class="right">
+    <button class="mode" id="modePill"><span class="d" id="modeIc"></span><span id="modeTxt" data-t>Normal mode</span></button>
+    <button class="iconbtn" id="widgetBtn" aria-label="Always-on-top widget" title="Always-on-top widget" data-t-attr="aria-label title">
+      <svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M13 5v14M13 12h7.5"/></svg>
+    </button>
+    <button class="iconbtn" id="gearBtn" aria-label="Settings" title="Settings (Ctrl ,)" data-t-attr="aria-label title">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+    <div class="winctl" aria-label="Window" data-t-attr="aria-label">
+      <button class="wc" id="winMin" aria-label="Minimize" title="Minimize" data-t-attr="aria-label title"><svg class="i" viewBox="0 0 24 24"><path d="M6 12.5h12"/></svg></button>
+      <button class="wc" id="winMax" aria-label="Maximize" title="Maximize" data-t-attr="aria-label title"><svg class="i" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.8"/></svg></button>
+      <button class="wc close" id="winClose" aria-label="Close" title="Close" data-t-attr="aria-label title"><svg class="i" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+    </div>
+    <div class="note" id="adminNote" role="dialog" aria-label="Administrator mode" data-t-attr="aria-label">
+      <p><b data-t>Turn on administrator mode</b> <span id="noteReason"></span></p>
+      <div class="row-btns"><button class="btn pri" id="adminYes" data-t>Turn on</button><button class="btn ghost" id="adminNo" data-t>Not now</button></div>
+      <button type="button" class="note-never" id="noteNeverBtn" role="checkbox" aria-checked="false"><span class="check" id="noteNever"><svg class="i" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span data-t>Don’t suggest this again</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="views">
+  <section class="view is-on" data-view="home" id="v-home"></section>
+</main>
+
+<nav class="dock" id="dock" aria-label="Modules" data-t-attr="aria-label"></nav>
+<div class="ver-tag" id="verWrap"><button class="bug-btn" id="bugBtn" type="button" aria-label="Report a bug" title="Report a bug" aria-expanded="false" data-t-attr="aria-label title"></button><span class="ver-t" id="verTag" aria-hidden="true"></span></div>
+<div class="toasts" id="toasts"></div>
+
+<div class="overlay" id="palO">
+  <div class="scrim" data-close></div>
+  <div class="pal" id="pal" role="dialog" aria-label="Search" data-t-attr="aria-label">
+    <div class="in"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+      <input id="palIn" placeholder="Type what you want to do" data-t-attr="placeholder" autocomplete="off" spellcheck="false"></div>
+    <div class="res" id="palRes"></div>
+    <div class="foot"><span data-t>Arrows to move</span><span data-t>Enter to open</span><span data-t>Esc to close</span></div>
+  </div>
+</div>
+
+<div class="overlay" id="setO">
+  <div class="scrim" data-close></div>
+  <aside class="sheet" id="sheet" aria-label="Settings" data-t-attr="aria-label"></aside>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/core.js"></script>
+<script src="js/sounds.js"></script>
+<script src="js/zoom.js"></script>
+<script src="js/telemetry.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/select.js"></script>
+<script src="js/admin-resume.js"></script>
+<script src="js/modules/monitor.js"></script>
+<script src="js/modules/drivers.js"></script>
+<script src="js/modules/remover.js"></script>
+<script src="js/modules/updater.js"></script>
+<script src="js/modules/storage.js"></script>
+<script src="js/modules/optimizer.js"></script>
+<script src="js/modules/tester.js"></script>
+<script src="js/modules/autopilot.js"></script>
+<script src="js/modules/hangar.js"></script>
+<script src="js/modules/privacy.js"></script>
+<script src="js/modules/benchmark.js"></script>
+<script src="js/backups.js"></script>
+<script src="js/selfupdate.js"></script>
+<script src="js/home/bento.js"></script>
+<script src="js/home/model3d.js"></script>
+<script src="js/home.js"></script>
+<script src="js/component-sheet.js"></script>
+<script src="js/widget.js"></script>
+<script src="js/widget-toggle.js"></script>
+<script src="js/window.js"></script>
+<script src="js/gamepad.js"></script>
+<script>SH.boot();</script>
+</body>
+</html>

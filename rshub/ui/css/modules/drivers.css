@@ -1,0 +1,275 @@
+/* Driver Updater */
+#v-drivers .du-wrap{display:flex;flex-direction:column;gap:var(--sp-md);min-height:100%}
+#v-drivers .du-hero{display:flex;align-items:center;gap:var(--sp-xl);padding:18px 22px}
+#v-drivers .du-radar{position:relative;width:92px;height:92px;flex:none;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in oklab,var(--accent2) 10%,transparent) 0 30%,transparent 31%);border:1px solid var(--line)}
+#v-drivers .du-radar i{position:absolute;inset:var(--in);border-radius:50%;border:1px solid var(--line)}
+#v-drivers .du-radar .sweep{position:absolute;inset:0;border-radius:50%;opacity:0;
+  background:conic-gradient(from 0deg,transparent 0 290deg,color-mix(in oklab,var(--accent2) 55%,transparent) 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 6px,#000 7px);mask:radial-gradient(circle,transparent 0 6px,#000 7px);
+  transition:opacity calc(300ms*var(--f))}
+#v-drivers .du-radar.on .sweep{opacity:1;animation:duSpin calc(1800ms*var(--f) + 300ms) linear infinite}
+html[data-int=min] #v-drivers .du-radar.on .sweep{animation-duration:4s}
+@keyframes duSpin{to{transform:rotate(360deg)}}
+#v-drivers .du-radar .core{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--acc-soft),0 0 0 9px color-mix(in oklab,var(--accent) 6%,transparent)}
+#v-drivers .du-radar .blip{position:absolute;width:7px;height:7px;margin:-3.5px;border-radius:50%;background:var(--accent2);box-shadow:0 0 0 3px var(--ice-soft)}
+#v-drivers .du-hero-t{flex:1;min-width:0}
+#v-drivers .du-hero-t h3{font:500 var(--fs-h2)/1.2 var(--display);letter-spacing:-.02em}
+#v-drivers .du-hero-t p{color:var(--mute);margin-top:6px;font-size:var(--fs-body)}
+#v-drivers .du-hero-t .phase{display:block;min-height:20px}
+#v-drivers .du-indet{height:4px;border-radius:var(--r-xs);background:var(--raise2);overflow:hidden;margin-top:12px;max-width:420px;opacity:0;transition:opacity calc(250ms*var(--f))}
+#v-drivers .du-indet.on{opacity:1}
+#v-drivers .du-indet span{display:block;height:100%;width:34%;border-radius:var(--r-xs);background:linear-gradient(90deg,transparent,var(--accent2),transparent);animation:duIndet calc(1400ms*var(--f) + 300ms) cubic-bezier(.5,0,.3,1) infinite}
+@keyframes duIndet{from{transform:translateX(-110%)}to{transform:translateX(310%)}}
+#v-drivers .du-hero-a{display:flex;gap:var(--sp-sm);align-items:center}
+#v-drivers .du-time{font-size:var(--fs-sm);color:var(--faint);min-width:44px;text-align:right}
+
+#v-drivers .du-list{padding:10px 8px}
+#v-drivers .du-cols{display:grid;grid-template-columns:28px minmax(0,2.4fr) minmax(0,1.1fr) 112px 80px 140px;align-items:center;gap:var(--sp-md)}
+#v-drivers .tbl-head.du-cols{padding:6px 12px 10px}
+#v-drivers .du-row{padding:11px 12px;border-radius:var(--r-m);cursor:pointer;transition:background-color calc(150ms*var(--f))}
+#v-drivers .du-row:hover{background:var(--raise2)}
+#v-drivers .du-row.sel{background:color-mix(in oklab,var(--accent) 7%,transparent)}
+#v-drivers .du-row.sel:hover{background:color-mix(in oklab,var(--accent) 11%,var(--raise))}
+#v-drivers .du-row .nm{display:flex;align-items:center;gap:var(--sp-md);min-width:0}
+#v-drivers .du-row .nm .ri{width:34px;height:34px;flex:none;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2)}
+#v-drivers .du-row .nm .ri svg{width:var(--ic-m);height:var(--ic-m)}
+#v-drivers .du-row .nm b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .du-row .nm span{display:block;font-size:var(--fs-sm);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .du-row .c{font-size:var(--fs-sm);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .du-actbar{position:sticky;bottom:0;margin-top:auto;display:flex;align-items:center;gap:var(--sp-md);padding:12px 14px 12px 20px;border-radius:var(--r-m);
+  background:color-mix(in oklab,var(--deep) 94%,transparent);border:1px solid var(--line2);box-shadow:0 18px 40px -18px rgba(0,0,0,.8);z-index:2}
+#v-drivers .du-actbar .t{flex:1;color:var(--mute)}
+#v-drivers .du-actbar .t b{color:var(--ink);font-weight:500}
+
+/* installation */
+#v-drivers .du-inst{padding:8px}
+#v-drivers .du-step{display:grid;grid-template-columns:34px minmax(0,1fr) 220px 110px;gap:var(--sp-md);align-items:center;padding:12px}
+#v-drivers .du-step .st{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--raise2);color:var(--mute);position:relative}
+#v-drivers .du-step .st svg{width:var(--ic-m);height:var(--ic-m)}
+#v-drivers .du-step.run .st{color:var(--accent2)}
+#v-drivers .du-step.run .st::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;border-top-color:var(--accent2);animation:duSpin calc(900ms*var(--f) + 200ms) linear infinite}
+#v-drivers .du-step.ok .st{background:color-mix(in oklab,var(--ok) 18%,transparent);color:var(--ok)}
+#v-drivers .du-step b{display:block;font-weight:500}
+#v-drivers .du-step .sub{font-size:var(--fs-sm);color:var(--mute)}
+#v-drivers .du-step .bar{height:5px}
+#v-drivers .du-step .bar>span{transition:none}
+#v-drivers .du-step .res{text-align:right}
+#v-drivers .du-done{display:flex;align-items:center;gap:var(--sp-lg);padding:18px 22px}
+#v-drivers .du-done .ring{width:52px;height:52px;flex:none}
+#v-drivers .du-done h3{font:500 var(--fs-h3) var(--display);letter-spacing:-.015em}
+#v-drivers .du-done p{color:var(--mute);margin-top:4px}
+#v-drivers .du-done .a{margin-left:auto;display:flex;gap:var(--sp-sm)}
+
+/* all drivers */
+#v-drivers .tab.fill{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,380px);gap:var(--sp-md)}
+#v-drivers .da-left{display:flex;flex-direction:column;min-height:0}
+#v-drivers .da-tools{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:12px;flex-wrap:wrap}
+#v-drivers .da-tools .field{flex:1;min-width:200px;max-width:360px}
+#v-drivers .da-tools .cnt{margin-left:auto;font-size:var(--fs-sm);color:var(--mute)}
+#v-drivers .da-scroll{flex:1;min-height:0;overflow:auto;padding-right:4px}
+#v-drivers .da-grp{margin-bottom:6px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--raise)}
+#v-drivers .da-gh{display:flex;align-items:center;gap:var(--sp-md);width:100%;padding:11px 14px;text-align:left;border-radius:var(--r-m);transition:background-color calc(150ms*var(--f))}
+#v-drivers .da-gh:hover{background:var(--raise2)}
+#v-drivers .da-gh .cv{color:var(--faint);transition:transform calc(260ms*var(--f)) var(--e-snap)}
+#v-drivers .da-grp.open .da-gh .cv{transform:rotate(90deg)}
+#v-drivers .da-gh .ri{width:30px;height:30px;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2)}
+#v-drivers .da-gh .ri svg{width:var(--ic-m);height:var(--ic-m)}
+#v-drivers .da-gh b{font-weight:500;flex:1}
+#v-drivers .da-gh .n{font-size:var(--fs-sm);color:var(--mute)}
+#v-drivers .da-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows calc(320ms*var(--f)) cubic-bezier(.2,.9,.3,1)}
+#v-drivers .da-grp.open .da-body{grid-template-rows:1fr}
+#v-drivers .da-body>div{overflow:hidden;min-height:0}
+#v-drivers .da-in{padding:0 6px 6px}
+#v-drivers .da-row{display:grid;grid-template-columns:minmax(0,1fr) 120px 112px 118px;gap:var(--sp-md);align-items:center;width:100%;text-align:left;padding:8px 10px;border-radius:var(--r-s);font-size:var(--fs-sm);
+  transition:background-color calc(140ms*var(--f))}
+#v-drivers .da-row:hover{background:var(--raise2)}
+/* long lists: rows far outside the scroll area are not laid out or painted until they come near (about 50 px each) */
+#v-drivers .da-row{content-visibility:auto;contain-intrinsic-size:auto 50px}
+#v-drivers .da-row.sel{background:color-mix(in oklab,var(--accent) 9%,transparent)}
+#v-drivers .da-row .n1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .da-row .n1 small{display:block;color:var(--faint);font-size:var(--fs-cap)}
+#v-drivers .da-row .v{color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .age{display:inline-flex;align-items:center;gap:var(--sp-sm);font-size:var(--fs-sm);color:var(--mute);white-space:nowrap}
+#v-drivers .age i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ok));box-shadow:0 0 0 2.5px color-mix(in oklab,var(--c,var(--ok)) 18%,transparent)}
+#v-drivers .da-detail{display:flex;flex-direction:column;min-height:0;overflow:auto}
+#v-drivers .dd-in h3{font:500 var(--fs-h3)/1.3 var(--display);letter-spacing:-.015em;margin:10px 0 4px}
+#v-drivers .dd-in .who{color:var(--mute);font-size:var(--fs-sm)}
+#v-drivers .dd-in dl{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-sm) var(--sp-md);font-size:var(--fs-sm);margin:16px 0}
+#v-drivers .dd-in dt{color:var(--mute)} #v-drivers .dd-in dd{text-align:right;word-break:break-all}
+#v-drivers .dd-in .dnote{font-size:var(--fs-sm);color:var(--faint);padding:10px 12px;border-radius:var(--r-s);background:var(--raise);margin-bottom:14px}
+#v-drivers .dd-in .acts{display:flex;flex-direction:column;gap:var(--sp-sm)}
+#v-drivers .dd-in .acts .btn{justify-content:flex-start}
+#v-drivers .dd-files{margin-top:14px;font-size:var(--fs-sm);color:var(--mute)}
+#v-drivers .dd-files div{padding:5px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between}
+#v-drivers .dd-empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--mute);padding:var(--sp-md)}
+
+/* problems */
+#v-drivers .dp-hero{display:flex;align-items:center;gap:var(--sp-lg);padding:20px 22px}
+#v-drivers .dp-hero svg.ring{width:64px;height:64px;flex:none}
+#v-drivers .dp-hero h3{font:500 var(--fs-h2) var(--display);letter-spacing:-.02em}
+#v-drivers .dp-hero p{color:var(--mute);margin-top:4px}
+#v-drivers .dp-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:var(--sp-md)}
+#v-drivers .dp-ex{opacity:.8;border-style:dashed}
+#v-drivers .dp-ex .code{font-size:var(--fs-sm);color:var(--faint);margin:10px 0 14px;line-height:1.5}
+
+/* backup */
+#v-drivers .db-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-lg) var(--sp-xl);align-items:end;padding:20px 22px}
+#v-drivers .db-hero h3{font:500 var(--fs-h2) var(--display);letter-spacing:-.02em}
+#v-drivers .db-hero p{color:var(--mute);margin-top:4px;max-width:560px}
+#v-drivers .db-dest{display:flex;align-items:stretch;gap:var(--sp-sm);margin-top:16px;max-width:620px}
+#v-drivers .db-dest .btn{height:auto;padding:0 18px}
+#v-drivers .db-dest .field{flex:1}
+#v-drivers .db-opts{display:flex;align-items:center;gap:var(--sp-md);margin-top:14px;font-size:var(--fs-body);color:var(--mute)}
+#v-drivers .db-prog{grid-column:1 / -1;display:none;align-items:center;gap:var(--sp-lg);padding-top:6px}
+#v-drivers .db-prog.on{display:flex}
+#v-drivers .db-prog .big{font-size:var(--fs-n2);min-width:150px}
+#v-drivers .db-prog .w{flex:1}
+#v-drivers .db-prog .f{font-size:var(--fs-sm);color:var(--faint);margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .db-prog .bar>span{transition:none}
+#v-drivers .db-cols{display:grid;grid-template-columns:minmax(0,1.4fr) 110px 100px minmax(0,1.6fr) auto;gap:var(--sp-md);align-items:center}
+#v-drivers .db-row{padding:12px;border-radius:var(--r-m);transition:background-color calc(150ms*var(--f))}
+#v-drivers .db-row:hover{background:var(--raise2)}
+#v-drivers .db-row .p{font-size:var(--fs-sm);color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .db-row .a{display:flex;gap:var(--sp-xs)}
+#v-drivers .db-row.fresh{background:color-mix(in oklab,var(--accent2) 9%,transparent)}
+
+/* history */
+#v-drivers .dh-month{font-size:var(--fs-sm);color:var(--mute);margin:18px 6px 8px}
+#v-drivers .dh-month:first-child{margin-top:0}
+#v-drivers .dh-row{display:grid;grid-template-columns:86px minmax(0,1.6fr) minmax(0,1.4fr) 110px auto;gap:var(--sp-md);align-items:center;padding:11px 12px;border-radius:var(--r-m);transition:background-color calc(150ms*var(--f))}
+#v-drivers .dh-row:hover{background:var(--raise2)}
+#v-drivers .dh-row .d{font-size:var(--fs-sm);color:var(--mute)}
+#v-drivers .dh-row .ver{font-size:var(--fs-sm);color:var(--mute);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
+#v-drivers .dh-row .ver svg{width:var(--ic-s);height:var(--ic-s);color:var(--faint);flex:none}
+#v-drivers .dh-row .ver b{color:var(--ink);font-weight:500}
+@media (max-width:1250px){
+  #v-drivers .du-cols{grid-template-columns:28px minmax(0,2fr) minmax(0,1fr) 90px 70px}
+  #v-drivers .du-cols>:nth-child(6){display:none}
+  #v-drivers .da-row{grid-template-columns:minmax(0,1fr) 96px 110px}
+  #v-drivers .da-row>:nth-child(3){display:none}
+  #v-drivers .dp-grid{grid-template-columns:1fr}
+}
+/* adjustments after reviewing screenshots */
+#v-drivers .subnav .bd[hidden]{display:none}
+#v-drivers .dh-row{grid-template-columns:86px minmax(0,1.6fr) minmax(0,1.4fr) 110px 90px}
+#v-drivers .db-cols{grid-template-columns:minmax(0,1.2fr) 90px 90px minmax(0,1.8fr) 190px}
+#v-drivers .db-row .a{justify-content:flex-end}
+#v-drivers .du-step{grid-template-columns:34px minmax(0,1fr) 220px 160px}
+
+/* ---------- layout: everything reaches down to the dock, scrolling happens inside the panels ---------- */
+#v-drivers .du-wrap{height:100%;min-height:0}
+#v-drivers .du-wrap>.pan:last-child{flex:1 1 auto}
+/* updates: the list grows and scrolls inside; the selection bar sits below it without covering rows */
+#v-drivers .du-list{flex:1 1 0;min-height:200px;display:flex;flex-direction:column}
+#v-drivers .du-list>.tbl-head{flex:none}
+#v-drivers .du-list>#duRows,#v-drivers .du-list>.du-inst,#v-drivers .du-list>.sk-rows{flex:1;min-height:0;overflow:auto}
+#v-drivers .du-actbar{position:relative;margin-top:0;flex:none}
+#v-drivers .du-done{flex:none}
+/* all drivers: search and filters in the panel header; groups as sections of the same panel */
+#v-drivers .da-left{padding:12px 8px 4px}
+#v-drivers .da-tools{padding:0 6px 12px;margin:0 0 6px;border-bottom:1px solid var(--line);flex:none}
+#v-drivers .da-scroll{padding:0 2px 0 0}
+#v-drivers .da-grp{border:0;background:none;border-radius:var(--r-m);margin-bottom:2px}
+#v-drivers .da-grp+.da-grp{border-top:1px solid var(--line);border-radius:0}
+#v-drivers .da-gh{border-radius:var(--r-m)}
+#v-drivers .da-row .n1{white-space:normal}
+#v-drivers .da-row .n1>small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .da-detail{padding:18px}
+/* problems and backups: the lower panels take the remaining height */
+#v-drivers .dp-grid{flex:1 1 auto;min-height:220px;align-items:stretch}
+#v-drivers .dp-grid>.pan{display:flex;flex-direction:column}
+
+/* ---------- real engine: confirmations, problems, performance ---------- */
+#v-drivers .dq-o{position:absolute;inset:0;z-index:30;display:grid;place-items:center}
+#v-drivers .dq-s{position:absolute;inset:-60px -40px;background:rgba(3,5,11,.55)}
+#v-drivers .dq{position:relative;width:min(460px,calc(100% - 40px));padding:22px 22px 18px;border-radius:var(--r-l);background:var(--deep);border:1px solid var(--line2);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9)}
+#v-drivers .dq h3{font:500 var(--fs-h3)/1.25 var(--display);letter-spacing:-.015em}
+#v-drivers .dq p{color:var(--mute);margin-top:8px;font-size:var(--fs-body);line-height:1.5}
+#v-drivers .dq p b{color:var(--ink);font-weight:500}
+#v-drivers .dq-a{display:flex;justify-content:flex-end;gap:var(--sp-sm);margin-top:18px}
+#v-drivers .dp-grid>.pan{min-height:0}
+#v-drivers .dp-list{flex:1;min-height:0;overflow:auto;margin:0 -6px;padding:0 6px}
+#v-drivers .dp-list .row .rt span{white-space:normal}
+#v-drivers .dp-sub{font-size:var(--fs-sm);color:var(--faint);padding:12px 12px 4px}
+#v-drivers .dp-hero .btn{flex:none}
+#v-drivers .da-row.bad .n1 small{color:var(--warn)}
+#v-drivers .dh-pan{display:flex;flex-direction:column}
+#v-drivers .dh-note{font-size:var(--fs-sm);color:var(--mute);padding:2px 6px 6px}
+#v-drivers .dd-files div{align-items:center;gap:var(--sp-sm)}
+#v-drivers .dd-files small{font-size:var(--fs-cap)}
+/* smooth scrolling: the browser does not paint the groups that are out of view */
+#v-drivers .da-grp{content-visibility:auto;contain-intrinsic-size:auto 52px}
+#v-drivers .da-grp.open{contain-intrinsic-size:auto 400px}
+#v-drivers .dh-row,#v-drivers .db-row{content-visibility:auto;contain-intrinsic-size:auto 56px}
+
+/* backup tab: old copies in the DriverStore */
+#v-drivers .ds-note{font-size:var(--fs-sm);color:var(--mute);line-height:1.5;margin:2px 0 10px;max-width:760px}
+#v-drivers .ds-row{display:grid;grid-template-columns:18px 34px minmax(0,1fr) auto;gap:var(--sp-md);align-items:center;padding:11px 12px;border-radius:var(--r-m);cursor:pointer;transition:background-color calc(150ms*var(--f))}
+#v-drivers .ds-row:hover{background:var(--raise2)}
+#v-drivers .ds-row.sel{background:color-mix(in oklab,var(--accent) 7%,transparent)}
+#v-drivers .ds-row .ri{width:34px;height:34px;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2)}
+#v-drivers .ds-row .ri svg{width:var(--ic-m);height:var(--ic-m)}
+#v-drivers .ds-row .rt{min-width:0}
+#v-drivers .ds-row .rt b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .ds-row .rt span{display:block;font-size:var(--fs-sm);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-drivers .ds-mb{font-size:var(--fs-sm);white-space:nowrap}
+#v-drivers .ds-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-md);margin-top:10px;padding-top:12px;border-top:1px solid var(--line)}
+@media (max-width:640px){#v-drivers .ds-row{grid-template-columns:18px minmax(0,1fr) auto}#v-drivers .ds-row .ri{display:none}}
+/* backup tab: hero on top, saved backups and old copies side by side down to the dock, each scrolling inside */
+#v-drivers .db-hero{flex:none}
+#v-drivers .db-lower{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:var(--sp-md)}
+#v-drivers .db-lower>.pan{display:flex;flex-direction:column;min-height:0}
+#v-drivers .db-lower>.pan>h4,#v-drivers .db-lower>.pan>.tbl-head,#v-drivers .db-lower>.pan>.ds-note,#v-drivers .db-lower>.pan>.ds-foot{flex:none}
+#v-drivers .db-lower>.pan>.rows{flex:1 1 0;min-height:60px;overflow:auto}
+#v-drivers .db-store .ds-row .rt span{white-space:normal}
+@media (max-width:1100px){#v-drivers .du-wrap:has(>.db-lower){height:auto}#v-drivers .db-lower{flex:none;grid-template-columns:1fr;grid-auto-rows:auto}#v-drivers .db-lower>.pan>.rows{flex:none;max-height:340px}}
+
+/* empty states (SH.emptyState): centred in their panel */
+#v-drivers .du-empty{margin:auto;width:100%}
+#v-drivers .rows>.du-empty{padding:var(--sp-lg) var(--sp-md)}
+#v-drivers .dh-pan>.du-empty{min-height:260px}
+
+/* "select all" boxes: none, some (a dash) or all */
+#v-drivers #duAll,#v-drivers #dsAll{cursor:pointer}
+#v-drivers .check.some{background:var(--accent);border-color:var(--accent)}
+#v-drivers .check.some svg{opacity:0;grid-area:1/1}
+#v-drivers .check.some::after{content:"";grid-area:1/1;width:8px;height:2px;border-radius:var(--r-xs);background:var(--on-accent)}
+#v-drivers .db-store>h4>#dsAll{margin:0 4px 0 12px}
+#v-drivers .db-store>h4>#dsAll[hidden]{display:none}
+
+/* ---------- work in progress: spinners, busy buttons, elapsed time ---------- */
+#v-drivers .dv-spin{width:13px;height:13px;flex:none;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;opacity:.85;
+  animation:duSpin calc(800ms + 400ms*(1 - var(--f))) linear infinite}
+html[data-int=min] #v-drivers .dv-spin{animation-duration:2.4s}
+/* a busy button stays readable (it is working, not unavailable) */
+#v-drivers .btn.busy[disabled]{opacity:.85}
+#v-drivers .btn.busy .bt:empty{display:none}
+/* restore point while it is being created: a light sweeping over the bar and the time so far in the chip */
+#v-drivers .du-step.indet .bar{position:relative}
+#v-drivers .du-step.indet .bar::after{content:"";position:absolute;inset:0;width:34%;border-radius:var(--r-s);
+  background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--ink) 55%,transparent),transparent);
+  animation:duIndet calc(1400ms*var(--f) + 300ms) cubic-bezier(.5,0,.3,1) infinite}
+html[data-int=min] #v-drivers .du-step.indet .bar::after{animation:none;opacity:0}
+#v-drivers .du-el{font-variant-numeric:tabular-nums;color:var(--faint);margin-left:2px}
+/* all drivers: what the rollback is doing right now */
+#v-drivers .dd-status{display:flex;align-items:center;gap:var(--sp-sm);margin-top:10px;padding:9px 12px;border-radius:var(--r-s);font-size:var(--fs-sm);
+  color:var(--accent2);background:color-mix(in oklab,var(--accent2) 9%,transparent)}
+#v-drivers .dd-status .tx{flex:1;min-width:0;color:var(--ink)}
+#v-drivers .dd-status .tm{font-variant-numeric:tabular-nums;color:var(--mute)}
+/* backup: file line and elapsed time under the bar; a row that is going to the Recycle Bin */
+#v-drivers .db-prog .ft{display:flex;align-items:baseline;gap:var(--sp-md)}
+#v-drivers .db-prog .ft .f{flex:1;min-width:0}
+#v-drivers .db-prog .tm{font-size:var(--fs-sm);color:var(--mute);font-variant-numeric:tabular-nums}
+#v-drivers .db-row.busy{opacity:.75}
+#v-drivers .db-row.busy .p{display:flex;align-items:center;gap:var(--sp-sm);color:var(--accent2)}
+#v-drivers .db-row.busy .p span:last-child{color:var(--mute)}
+
+#v-drivers .du-src{display:flex;align-items:center;gap:var(--sp-sm);margin:0 4px;color:var(--mute);font-size:var(--fs-sm);line-height:1.45}
+#v-drivers .du-src svg{flex:none;width:var(--ic-m);height:var(--ic-m);color:var(--accent2)}
+/* layout: every panel reaches the dock (a short list scrolls inside a full-height panel; an empty one centres its
+   message) so no column ends half way with an empty band under it */
+#v-drivers .db-lower>.pan,#v-drivers .dp-grid>.pan{align-self:stretch;min-height:0}
+#v-drivers .da-detail{align-self:stretch;max-height:100%;min-height:200px}
+#v-drivers .dh-pan{min-height:100%}

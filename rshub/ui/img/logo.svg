@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- RsHub app icon. Same drawing as make_icon_image() in rshub/tray.py (which builds the .ico);
+       logo-small.svg is the simplified version for 32 px and below. -->
+  <defs>
+    <clipPath id="tile"><rect x="10.24" y="10.24" width="235.52" height="235.52" rx="57.6"/></clipPath>
+    <linearGradient id="space" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A4E"/>
+      <stop offset="1" stop-color="#070B16"/>
+    </linearGradient>
+    <radialGradient id="warm" cx="122.9" cy="153.6" r="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3A1E2C" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#3A1E2C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cool" cx="209.9" cy="30.7" r="115.2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1E3454" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#1E3454" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C8E4FF" stop-opacity=".47"/>
+      <stop offset=".62" stop-color="#C8E4FF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="sphere" cx="104.96" cy="110.1" r="97.3" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFBAA6"/>
+      <stop offset=".5" stop-color="#FF8670"/>
+      <stop offset=".6" stop-color="#FC7A66"/>
+      <stop offset=".78" stop-color="#DC5C55"/>
+      <stop offset="1" stop-color="#B53A3F"/>
+    </radialGradient>
+    <linearGradient id="limb" x1="76.8" y1="84.5" x2="140" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD6C8" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#FFD6C8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ringFront" x1="0" y1="0" x2="196.9" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E2F4FF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="ringBack" x1="0" y1="0" x2="256" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#96C8F0"/>
+      <stop offset="1" stop-color="#689ED6"/>
+    </linearGradient>
+    <clipPath id="planet"><circle cx="128" cy="135.68" r="51.2"/></clipPath>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="haze" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="13"/></filter>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect width="256" height="256" fill="url(#space)"/>
+    <rect width="256" height="256" fill="url(#warm)"/>
+    <rect width="256" height="256" fill="url(#cool)"/>
+    <g fill="#E6F2FF">
+      <circle cx="44" cy="58" r="1.2" opacity=".75"/><circle cx="71" cy="31" r="1.5" opacity=".55"/>
+      <circle cx="148" cy="33" r="1.2" opacity=".6"/><circle cx="36" cy="196" r="1.5" opacity=".5"/>
+      <circle cx="214" cy="118" r="1.2" opacity=".65"/><circle cx="198" cy="214" r="2" opacity=".45"/>
+      <circle cx="96" cy="226" r="1.2" opacity=".6"/><circle cx="58" cy="112" r="1" opacity=".5"/>
+      <circle cx="226" cy="168" r="1.5" opacity=".55"/><circle cx="160" cy="232" r="1" opacity=".5"/>
+    </g>
+    <rect x="11.1" y="11.1" width="233.8" height="233.8" rx="56.7" fill="none" stroke="url(#rim)" stroke-width="1.8"/>
+
+    <g transform="rotate(-20 128 135.68)">
+      <!-- the half of the ring behind the planet -->
+      <path d="M37.6 135.68A90.4 26.4 0 0 1 218.4 135.68" fill="none" stroke="url(#ringBack)" stroke-width="16.4" stroke-opacity=".9"/>
+    </g>
+    <circle cx="128" cy="135.68" r="51.2" fill="url(#sphere)"/>
+    <g clip-path="url(#planet)">
+      <circle cx="128" cy="135.68" r="50.2" fill="none" stroke="url(#limb)" stroke-width="2"/>
+      <g transform="rotate(-20 128 135.68)">
+        <!-- the ring's shadow on the planet, and a sliver of space between them -->
+        <path d="M218.4 142.9A90.4 26.4 0 0 1 37.6 142.9" fill="none" stroke="#5A1022" stroke-opacity=".5" stroke-width="16.4" filter="url(#soft)"/>
+        <path d="M218.4 135.68A90.4 26.4 0 0 1 37.6 135.68" fill="none" stroke="#181428" stroke-opacity=".85" stroke-width="22"/>
+      </g>
+    </g>
+    <g transform="rotate(-20 128 135.68)">
+      <!-- the half in front -->
+      <path d="M218.4 135.68A90.4 26.4 0 0 1 37.6 135.68" fill="none" stroke="url(#ringFront)" stroke-width="16.4"/>
+    </g>
+
+    <circle cx="198.4" cy="51.2" r="32" fill="#FFFFFF" opacity=".22" filter="url(#haze)"/>
+    <circle cx="198.4" cy="51.2" r="12.3" fill="#E2F2FF"/>
+  </g>
+</svg>

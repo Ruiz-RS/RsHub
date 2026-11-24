@@ -1,0 +1,188 @@
+/* RsHub · "Mosaic" Home view */
+.hv-bento{position:absolute;inset:0;display:grid;gap:10px;container-type:size;
+  grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:1fr 1fr .82fr .82fr;
+  grid-template-areas:"gpu gpu cpu cpu" "gpu gpu cpu cpu" "ram ssd dsp dsp" "bat wif aud sys"}
+.hv-bento .bt{position:relative;perspective:900px;min-width:0;min-height:0;cursor:pointer;outline:none;border-radius:var(--r-l)}
+.hv-bento .a-ram,.hv-bento .a-ssd,.hv-bento .a-bat,.hv-bento .a-wif,.hv-bento .a-aud,.hv-bento .a-sys{border-radius:var(--r-m)}
+.hv-bento .tilt{position:absolute;inset:0;border-radius:inherit;transform-style:preserve-3d;will-change:transform;overflow:hidden;
+  display:flex;flex-direction:column;padding:14px 16px 14px;border:1px solid var(--line);background:var(--sheen),var(--raise);box-shadow:var(--rim);
+  transition:border-color calc(200ms*var(--f)),background-color calc(200ms*var(--f))}
+.hv-bento .a-ram .tilt,.hv-bento .a-ssd .tilt,.hv-bento .a-bat .tilt,.hv-bento .a-wif .tilt,.hv-bento .a-aud .tilt,.hv-bento .a-sys .tilt{padding:11px 13px 12px}
+
+/* treatments: each tile has a different weight */
+.hv-bento .k-hero .tilt{border-color:color-mix(in oklab,var(--accent2) 26%,transparent);
+  background:radial-gradient(120% 95% at 72% 22%,color-mix(in oklab,var(--accent2) 15%,transparent),transparent 62%),var(--raise)}
+.hv-bento .k-chip .tilt{border-color:color-mix(in oklab,var(--accent) 30%,transparent);
+  background:radial-gradient(90% 80% at 50% 36%,color-mix(in oklab,var(--accent) 11%,transparent),transparent 66%),var(--raise)}
+.hv-bento .k-open .tilt{background:transparent}
+.hv-bento .k-deep .tilt{background:color-mix(in oklab,var(--void) 72%,transparent);box-shadow:inset 0 1px 0 var(--line)}
+.hv-bento .bt.hot .tilt{border-color:var(--line2)}
+.hv-bento .k-hero.hot .tilt{border-color:color-mix(in oklab,var(--accent2) 55%,transparent)}
+.hv-bento .k-chip.hot .tilt{border-color:color-mix(in oklab,var(--accent) 60%,transparent)}
+.hv-bento .bt:focus-visible .tilt{outline:2px solid var(--accent2);outline-offset:2px}
+
+/* glow that follows the cursor */
+.hv-bento .glow{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity calc(220ms*var(--f));
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in oklab,var(--accent2) 15%,transparent),transparent 62%)}
+.hv-bento .k-chip .glow{background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),color-mix(in oklab,var(--accent) 16%,transparent),transparent 62%)}
+.hv-bento .bt.hot .glow{opacity:1}
+
+/* wide, short tiles: illustration on the left, text on the right */
+.hv-bento .a-dsp .tilt{flex-direction:row;align-items:center;gap:14px}
+.hv-bento .a-dsp .art{flex:0 0 46%;height:100%;padding:0}
+.hv-bento .a-dsp .meta{flex:1}
+
+/* small tiles: the drawing fills the space above the text, centred, one common height; text below */
+.hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .tilt{justify-content:flex-end}
+.hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .art{flex:1 1 0;min-height:0;max-height:86px;width:100%;padding:2px 0 8px;align-items:center;justify-content:center}
+.hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .art svg{width:auto;height:100%;max-width:100%;max-height:100%}
+
+/* content */
+.hv-bento .art{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;transform:translateZ(26px);padding:4px 0 8px}
+.hv-bento .art svg{width:100%;height:100%;display:block;overflow:visible}
+.hv-bento .meta{transform:translateZ(12px);min-width:0}
+.hv-bento .meta .k{font-size:11.5px;color:var(--faint)}
+.hv-bento .meta .t{display:block;font:600 13.5px/1.25 var(--text);letter-spacing:0;margin-top:2px;overflow-wrap:anywhere}
+.hv-bento .a-gpu .meta .t,.hv-bento .a-cpu .meta .t{font:500 16px/1.2 var(--display);letter-spacing:-.015em}
+.hv-bento .live{margin-top:8px}
+.hv-bento .nums{display:flex;gap:18px;align-items:baseline;margin-bottom:8px}
+.hv-bento .nums b{font:500 17px var(--display);letter-spacing:-.025em}
+.hv-bento .nums b.n{font-size:32px;letter-spacing:-.04em}
+.hv-bento .nums small{font-size:11.5px;color:var(--mute);margin-left:3px}
+.hv-bento .lbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 8px;font-size:12px;line-height:1.35;color:var(--mute);margin-bottom:6px}
+.hv-bento .lbar b{color:var(--ink);font-weight:500}
+.hv-bento .lbar em{font-style:normal;color:var(--faint)}
+.hv-bento .bar{height:5px}
+.hv-bento .bar>span{transition:none;transform:scaleX(0)}
+.hv-bento .a-cpu .nums{margin-bottom:0}
+
+/* illustrations */
+.hv-bento svg text{font:400 11px var(--text);fill:var(--mute)}
+.hv-bento svg text.sm{font-size:8.5px}
+.hv-bento .art-gpu .body{fill:var(--raise2);stroke:var(--accent2);stroke-opacity:.45;stroke-width:1.2}
+.hv-bento .art-gpu .bracket{fill:var(--raise3);stroke:var(--accent2);stroke-opacity:.3}
+.hv-bento .art-gpu .strip{stroke:var(--accent);stroke-width:2;stroke-linecap:round;opacity:.85}
+.hv-bento .art-gpu .fin{stroke:var(--accent2);stroke-opacity:.28}
+.hv-bento .ring{fill:var(--void);fill-opacity:.65;stroke:var(--accent2);stroke-opacity:.35}
+.hv-bento .artbox{position:relative;flex:none}
+.hv-bento .artbox>svg.art-gpu{position:absolute;inset:0}
+/* the fans: their own composited layers over the drawing, turned by the Web Animations API (see bento.js) */
+.hv-bento .artbox>svg.gfan{position:absolute;width:auto;height:auto;overflow:visible;will-change:transform}
+.hv-bento .gfan path{fill:var(--accent2);fill-opacity:.14;stroke:var(--accent2);stroke-opacity:.55;stroke-width:1}
+.hv-bento .hub{fill:var(--deep);stroke:var(--accent2);stroke-opacity:.6}
+.hv-bento .gold{fill:var(--warn);fill-opacity:.16}
+.hv-bento .pin{fill:var(--warn);opacity:.6}
+
+.hv-bento .art-cpu .sub{fill:var(--raise2);stroke:var(--accent);stroke-opacity:.45;stroke-width:1.2}
+.hv-bento .art-cpu .pad{fill:var(--warn);opacity:.5}
+.hv-bento .art-cpu .cap{fill:var(--raise3);stroke:var(--accent2);stroke-opacity:.3}
+.hv-bento .art-cpu .die{fill:var(--accent);fill-opacity:.07;stroke:var(--accent);stroke-opacity:.6}
+.hv-bento .art-cpu .th{fill:var(--accent2);opacity:.2;transition:opacity calc(700ms*var(--f)) var(--e-out),fill calc(700ms*var(--f)) var(--e-out)}
+/* each frame of that fade repaints the whole SVG card: nobody is touching the app (or it is in lighter mode), so it just changes */
+html[data-idle="1"] .hv-bento .art-cpu .th,html[data-lite="1"] .hv-bento .art-cpu .th{transition:none}
+
+.hv-bento .pcb{fill:var(--raise2);stroke:var(--accent2);stroke-opacity:.45;stroke-width:1.1}
+.hv-bento .mchip{fill:var(--void);fill-opacity:.7;stroke:var(--accent2);stroke-opacity:.35}
+.hv-bento .hole{fill:var(--void);stroke:var(--accent2);stroke-opacity:.3}
+/* Hover micro-animations. One short pass each (no loops), transform and opacity only, started by hover or keyboard focus and
+   easing back on leave. will-change is only set while hovered. Lighter effects / reduced motion: no movement, just a colour change. */
+.hv-bento .mglow,.hv-bento .scrglow,.hv-bento .scan{opacity:0}
+.hv-bento .mglow,.hv-bento .scrglow{fill:var(--accent2)}
+.hv-bento .art-ssd .led{fill:var(--ok);opacity:.5}
+.hv-bento .scrglow{transition:opacity calc(420ms*var(--f)) var(--e-out)}
+.hv-bento .art-dsp .frame{fill:var(--raise2);stroke:var(--accent2);stroke-opacity:.45}
+.hv-bento .art-dsp .screen{fill:var(--void);fill-opacity:.85}
+.hv-bento .art-dsp .sweep{fill:var(--accent2);fill-opacity:.12;opacity:0}
+.hv-bento .art-dsp .stand{fill:none;stroke:var(--accent2);stroke-opacity:.45;stroke-width:1.5;stroke-linecap:round}
+.hv-bento .art-bat .body{fill:none;stroke:var(--accent2);stroke-opacity:.55;stroke-width:1.5}
+.hv-bento .art-bat .term{fill:var(--accent2);fill-opacity:.5}
+.hv-bento .art-bat .fill{fill:var(--ok);opacity:.5;transform-box:fill-box;transform-origin:0 50%;transform:scaleX(.97)}
+.hv-bento .art-bat .bolt{fill:var(--void);opacity:0;transition:opacity calc(300ms*var(--f))}
+.hv-bento .art-wif .arc{fill:none;stroke:var(--accent2);stroke-width:5;stroke-linecap:round;opacity:.35}
+.hv-bento .art-wif .dotw{fill:var(--accent2)}
+.hv-bento .art-aud .eq{fill:var(--accent);opacity:.75;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.55)}
+.hv-bento .art-sys .lay{fill:var(--accent2);fill-opacity:.1;stroke:var(--accent2);stroke-opacity:.6;stroke-linejoin:round;
+  transition:transform calc(520ms*var(--f)) var(--e-snap),fill-opacity calc(300ms*var(--f))}
+
+.hv-bento .bt:is(.hot,:focus-visible) :is(.scan,.mglow,.scrglow,.led,.sweep,.fill,.bolt,.arc,.eq,.lay){will-change:transform,opacity}
+/* CPU: a soft band of light crosses the die once */
+.hv-bento .bt:is(.hot,:focus-visible) .art-cpu .scan{animation:hvbScan calc(900ms*var(--f) + 120ms) cubic-bezier(.45,0,.25,1) both}
+@keyframes hvbScan{0%{opacity:0;transform:translateX(0)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateX(132px)}}
+/* Memory and storage: the chips light one after the other */
+.hv-bento .bt:is(.hot,:focus-visible) .mglow{animation:hvbChip calc(700ms*var(--f) + 80ms) ease-in-out both;animation-delay:calc(var(--d)*var(--f))}
+@keyframes hvbChip{0%,100%{opacity:0}40%{opacity:.34}}
+.hv-bento .bt:is(.hot,:focus-visible) .art-ssd .led{animation:hvbLed calc(640ms*var(--f) + 60ms) ease-in-out both}
+@keyframes hvbLed{0%{opacity:.5}20%,60%{opacity:1}40%,80%{opacity:.25}100%{opacity:.5}}
+/* Displays: the panels power on (a light fills them, then a sweep crosses the big one) */
+.hv-bento .bt:is(.hot,:focus-visible) .scrglow{opacity:.16}
+.hv-bento .bt:is(.hot,:focus-visible) .art-dsp .sweep{animation:hvbSweep calc(800ms*var(--f) + 100ms) cubic-bezier(.45,0,.2,1) both}
+@keyframes hvbSweep{0%{opacity:0;transform:translateX(0)}20%{opacity:1}100%{opacity:0;transform:translateX(112px)}}
+/* Battery: the level climbs one notch and the bolt appears */
+.hv-bento .bt:is(.hot,:focus-visible) .art-bat .bolt{opacity:.85}
+.hv-bento .bt:is(.hot,:focus-visible) .art-bat .fill{animation:hvbCharge calc(800ms*var(--f) + 100ms) cubic-bezier(.2,.7,.2,1) both}
+@keyframes hvbCharge{0%{transform:scaleX(.74);opacity:.5}100%{transform:scaleX(.97);opacity:.85}}
+/* Network: the arcs ripple outward from the dot, once */
+.hv-bento .bt:is(.hot,:focus-visible) .art-wif .arc{animation:hvbWave calc(700ms*var(--f) + 100ms) ease-out both}
+.hv-bento .bt:is(.hot,:focus-visible) .art-wif .a2{animation-delay:calc(130ms*var(--f))}
+.hv-bento .bt:is(.hot,:focus-visible) .art-wif .a3{animation-delay:calc(260ms*var(--f))}
+@keyframes hvbWave{0%,100%{opacity:.35}35%{opacity:1}}
+/* Audio: the bars rise and settle in a travelling wave, once */
+.hv-bento .bt:is(.hot,:focus-visible) .art-aud .eq{animation:hvbEq calc(700ms*var(--f) + 100ms) ease-in-out both;animation-delay:calc(var(--d)*.6*var(--f))}
+@keyframes hvbEq{0%,100%{transform:scaleY(.55)}35%{transform:scaleY(1)}65%{transform:scaleY(.3)}}
+/* System: the layers fan apart and close again on leave */
+.hv-bento .bt:is(.hot,:focus-visible) .art-sys .l1{transform:translateY(-7px);fill-opacity:.22}
+.hv-bento .bt:is(.hot,:focus-visible) .art-sys .l2{fill-opacity:.16}
+.hv-bento .bt:is(.hot,:focus-visible) .art-sys .l3{transform:translateY(7px)}
+
+/* lighter effects or reduced motion: nothing moves, the lit parts just change colour */
+html[data-lite="1"] .hv-bento .bt:is(.hot,:focus-visible) :is(.scan,.mglow,.sweep,.led,.fill,.arc,.eq,.lay,.scrglow,.bolt),
+html[data-int=min] .hv-bento .bt:is(.hot,:focus-visible) :is(.scan,.mglow,.sweep,.led,.fill,.arc,.eq,.lay,.scrglow,.bolt){animation:none;transition:none;will-change:auto}
+html[data-lite="1"] .hv-bento .bt:is(.hot,:focus-visible) .mglow,html[data-int=min] .hv-bento .bt:is(.hot,:focus-visible) .mglow{opacity:.22}
+html[data-lite="1"] .hv-bento .bt:is(.hot,:focus-visible) .arc,html[data-int=min] .hv-bento .bt:is(.hot,:focus-visible) .arc{opacity:.75}
+html[data-lite="1"] .hv-bento .bt:is(.hot,:focus-visible) .eq,html[data-int=min] .hv-bento .bt:is(.hot,:focus-visible) .eq{opacity:1}
+html[data-lite="1"] .hv-bento .bt:is(.hot,:focus-visible) .fill,html[data-int=min] .hv-bento .bt:is(.hot,:focus-visible) .fill{opacity:.85}
+@media (prefers-reduced-motion:reduce){
+  .hv-bento .bt:is(.hot,:focus-visible) :is(.scan,.mglow,.sweep,.led,.fill,.arc,.eq,.lay,.scrglow,.bolt){animation:none;transition:none;will-change:auto}
+  .hv-bento .bt:is(.hot,:focus-visible) .mglow{opacity:.22}.hv-bento .bt:is(.hot,:focus-visible) .arc{opacity:.75}
+  .hv-bento .bt:is(.hot,:focus-visible) .eq{opacity:1}.hv-bento .bt:is(.hot,:focus-visible) .fill{opacity:.85}}
+
+html[data-int=min] .hv-bento *{animation:none!important}
+
+/* ---------- every tile with the same background (Network, Audio and Displays used to look "switched off") ---------- */
+.hv-bento .k-deep .tilt,.hv-bento .k-open .tilt{background:var(--sheen),var(--raise);box-shadow:var(--rim)}
+/* the stage never gets the scroll-area fade */
+#stage,#stage .vwrap,.hv-bento{-webkit-mask-image:none!important;mask-image:none!important}
+/* dynamic grid: bento.js builds it from the components this PC has */
+.hv-bento{grid-template-areas:none}
+.hv-bento .na{color:var(--faint)}
+
+/* ---------- small stage (the minimum window): tiles shrink their text, never overlap or spill ---------- */
+.hv-bento .nums{flex-wrap:wrap;gap:2px 14px}
+.hv-bento .nums small{white-space:nowrap}
+.hv-bento .bt{container-type:size}
+.hv-bento .meta .k,.hv-bento .lbar>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+@container (max-height:150px){
+  .hv-bento .tilt{padding:9px 12px 10px!important}
+  .hv-bento .art{display:none!important}
+  /* short tiles keep their drawing (it used to be hidden): on the right, behind the text, softened like a
+     watermark, so it never takes space from the text at any window size; it lights up on hover */
+  .hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .meta{position:relative;z-index:1}
+  .hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .art{display:flex!important;position:absolute;right:10px;top:50%;
+    flex:none;width:auto;height:62cqh;max-width:46cqw;max-height:none;padding:0;pointer-events:none;z-index:0;
+    transform:translate3d(0,-50%,0);opacity:.3;transition:opacity calc(260ms*var(--f)) var(--e-out)}
+  .hv-bento .bt:is(.hot,:focus-visible):is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .art{opacity:.6}
+  .hv-bento :is(.a-ram,.a-ssd,.a-bat,.a-wif,.a-aud,.a-sys) .art svg{height:100%;width:100%;max-width:none;object-fit:contain}
+  .hv-bento .a-dsp .art{display:flex!important;flex:0 0 30%;height:100%;padding:6px 0}
+  .hv-bento .meta .t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal;font-size:12px}
+  .hv-bento .live{margin-top:3px}
+  .hv-bento .lbar{flex-wrap:nowrap;margin-bottom:0}
+}
+@container (max-height:150px) and (min-width:300px){
+  .hv-bento .a-dsp .meta .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
+@container (max-height:250px){
+  .hv-bento .meta .t{overflow:hidden;text-overflow:ellipsis}
+  .hv-bento .a-gpu .meta .t,.hv-bento .a-cpu .meta .t{display:block;white-space:nowrap}
+  .hv-bento .nums b.n{font-size:24px}
+  .hv-bento .nums{margin-bottom:5px}
+}

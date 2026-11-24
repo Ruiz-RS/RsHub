@@ -1,0 +1,22 @@
+{
+  "Processor": "Procesador",
+  "Graphics": "Gráficos",
+  "Memory": "Memoria",
+  "Video memory": "Memoria de vídeo",
+  "Drive C:": "Unidad C:",
+  "CPU fan": "Ventilador CPU",
+  "GPU fan": "Ventilador GPU",
+  "GPU power": "Consumo GPU",
+  "Download": "Descarga",
+  "Upload": "Subida",
+  "Battery": "Batería",
+  "Last 2 minutes": "Últimos 2 minutos",
+  "Components": "Componentes",
+  "Laptop": "Portátil",
+  "3D model": "Modelo 3D",
+  "Your PC in 3D: drag to rotate it and hover a component to see where it is.": "Tu PC en 3D: arrástralo para girarlo y pasa el ratón por un componente para ver dónde está.",
+  "Drag to rotate it. Scroll to zoom in.": "Arrastra para girarlo. Usa la rueda para acercarte.",
+  "Rotate, press to reset": "Girar; pulsa para restablecer",
+  "Zoom": "Zoom",
+  "Right stick to rotate it, LB and RB to zoom, press the stick to reset.": "Mueve el stick derecho para girarlo, LB y RB para acercarte o alejarte, y púlsalo para restablecer la vista."
+}

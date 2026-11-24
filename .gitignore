@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# build output (packaging/build.ps1)
+build/
+dist/
+.buildenv/
+*.spec
+!packaging/RsHub.spec
+
+# one-request translation bundles (rshub/i18n.py build_bundles; the build and every source start make them)
+rshub/ui/i18n/_bundle/
+
+# editores y sistema
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# datos locales
+*.log
+
+# release signing key (tools/release_sign.py keeps it outside the repo; this is a safety net)
+.rshub-release/
+*.key

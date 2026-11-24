@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" data-theme="deep">
+<head>
+<meta charset="utf-8">
+<title>RsHub widget</title>
+<link rel="stylesheet" href="css/base.css">
+<style>
+  html,body{background:var(--void)}
+  body{font-size:12.5px;cursor:default;overflow:hidden}
+  /* no border of its own: Windows draws the edge and corners (avoids a double frame) */
+  .w{position:fixed;inset:0;padding:10px 12px 14px;display:flex;box-shadow:inset 0 0 0 1px var(--line);flex-direction:column;
+     background:radial-gradient(300px 140px at 100% 0%, color-mix(in oklab,var(--accent2) 10%,transparent), transparent 70%),
+                radial-gradient(240px 120px at 0% 100%, color-mix(in oklab,var(--accent) 8%,transparent), transparent 70%),var(--void)}
+  .hd{display:flex;align-items:center;gap:7px;height:24px;margin-bottom:8px;color:var(--mute);font-size:11.5px;flex:none}
+  .hd svg.logo{width:15px;height:15px}
+  .hd .sp{flex:1}
+  .hd button{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;color:var(--faint);opacity:0;transform:scale(.8);
+     transition:opacity calc(160ms*var(--f)),transform calc(200ms*var(--f)) var(--e-snap),background-color calc(150ms*var(--f)),color calc(150ms*var(--f))}
+  .w:hover .hd button{opacity:1;transform:scale(1)}
+  .hd button:hover{background:var(--raise2);color:var(--ink)}
+  .hd button svg{width:14px;height:14px}
+  #rows{flex:1;min-height:0;display:grid;gap:6px}
+  /* grid and row: cells with a name, a big value and a mini chart */
+  .L-grid #rows{grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(0,1fr)}
+  .L-row #rows{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+  .c{position:relative;border-radius:10px;background:var(--raise);padding:7px 10px 0;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;column-gap:8px;overflow:hidden;
+     transition:background-color calc(160ms*var(--f))}
+  .c:hover{background:var(--raise2)}
+  .c .n{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:11.5px;white-space:nowrap}
+  .c .n svg{width:13px;height:13px;flex:none}
+  .c .n{min-width:0}
+  .c .n span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .c .v{font:500 17px/1 var(--display);letter-spacing:-.02em;white-space:nowrap;align-self:center;text-align:right}
+  .c .v small{font:400 11px var(--text);color:var(--faint);margin-left:2px;letter-spacing:0}
+  .c canvas{grid-column:1 / -1;width:100%;height:100%;min-height:16px;display:block;align-self:end;contain:size}
+  .c{min-height:0}
+  .L-row .c{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+  .L-row .c .v{text-align:left;margin-top:5px}
+  /* when the user makes it small: the charts go first, then whole stats (never half a number) */
+  .compact .c canvas{display:none}
+  .compact .c{grid-template-rows:1fr;align-items:center;padding-bottom:7px}
+  .compact.L-row .c{grid-template-rows:auto auto}
+  .compact .c .v{font-size:15px}
+  .c.hot .v{color:var(--warn)}
+  /* list */
+  .L-list #rows{grid-auto-rows:30px;gap:2px}
+  .L-list .c{background:none;padding:0 4px;grid-template-columns:18px 1fr auto 60px;grid-template-rows:1fr;align-items:center;column-gap:8px}
+  .L-list .c .n{display:contents}
+  .L-list .c canvas{grid-column:auto;height:18px}
+  /* small version: a thin bar, only icon and number; the buttons appear on hover */
+  .M-mini{padding:0 12px;flex-direction:row;align-items:center;gap:10px}
+  /* the buttons float over the right end on hover, so the numbers get the whole bar */
+  .M-mini .hd{position:absolute;right:0;top:0;bottom:0;margin:0;height:auto;gap:2px;padding:0 6px 0 22px;z-index:2;
+     background:linear-gradient(90deg,transparent,var(--void) 18px);opacity:0;pointer-events:none;transition:opacity calc(160ms*var(--f))}
+  .M-mini:hover .hd{opacity:1;pointer-events:auto}
+  .M-mini .hd .logo,.M-mini .hd>span{display:none}
+  .M-mini .hd button{width:22px;height:22px}
+  .M-mini #rows{display:flex;gap:6px;justify-content:space-between;align-items:center;flex:1 1 auto;min-width:0;overflow:hidden}
+  /* squeezed (the user made the bar narrow): tighter numbers, still whole */
+  .M-mini.tight .c{padding:0 4px 0 3px;gap:4px}
+  .M-mini.tight .c .v{min-width:3.3em}
+  .M-mini .c{display:flex;align-items:center;gap:6px;padding:0;background:none;overflow:visible;flex:none}
+  .M-mini .c:hover{background:none}
+  .M-mini .c .n span,.M-mini .c canvas{display:none}
+  .M-mini .c .n svg{width:14px;height:14px;color:var(--accent2)}
+  .M-mini .c .v{font:500 13px/1 var(--display);text-align:left;min-width:4.6em;white-space:nowrap}
+  .M-mini .c .v small{font-size:10.5px}
+  /* small version hover: without growing, the number slides up and its name appears */
+  .M-mini .c{position:relative;padding:0 8px 0 6px;height:26px;border-radius:8px;
+     transition:background-color calc(180ms*var(--f))}
+  .M-mini .c::before{content:"";position:absolute;inset:0;border-radius:8px;background:var(--raise2);opacity:0;transform:scale(.85);
+     transition:opacity calc(180ms*var(--f)),transform calc(260ms*var(--f)) var(--e-snap)}
+  .M-mini .c:hover::before{opacity:1;transform:scale(1)}
+  .M-mini .c .n{position:relative;transition:transform calc(260ms*var(--f)) var(--e-snap)}
+  .M-mini .c:hover .n{transform:scale(1.15) rotate(-6deg)}
+  .M-mini .c:hover .n svg{color:var(--accent)}
+  .M-mini .slot{position:relative;display:grid;height:16px;overflow:hidden;align-items:center}
+  .M-mini .slot>*{grid-area:1/1;transition:transform calc(320ms*var(--f)) cubic-bezier(.16,1,.3,1),opacity calc(220ms*var(--f))}
+  .M-mini .slot .lab{font:500 12px/16px var(--text);color:var(--ink);white-space:nowrap;transform:translateY(100%);opacity:0}
+  .M-mini .c:hover .slot .v{transform:translateY(-100%);opacity:0}
+  .M-mini .c:hover .slot .lab{transform:none;opacity:1}
+  .lab{display:none}
+  .M-mini .lab{display:block}
+  .M-mini .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2.5px var(--acc-soft);flex:none}
+  /* edges to resize the widget (the small version only stretches sideways) */
+  .wrz{position:fixed;z-index:20}
+  .wrz[data-edge=n]{top:0;left:8px;right:8px;height:4px;cursor:n-resize}
+  .wrz[data-edge=s]{bottom:0;left:8px;right:8px;height:4px;cursor:s-resize}
+  .wrz[data-edge=w]{left:0;top:8px;bottom:8px;width:4px;cursor:w-resize}
+  .wrz[data-edge=e]{right:0;top:8px;bottom:8px;width:4px;cursor:e-resize}
+  .wrz[data-edge=nw]{left:0;top:0;width:8px;height:8px;cursor:nw-resize}
+  .wrz[data-edge=ne]{right:0;top:0;width:8px;height:8px;cursor:ne-resize}
+  .wrz[data-edge=sw]{left:0;bottom:0;width:8px;height:8px;cursor:sw-resize}
+  .wrz[data-edge=se]{right:0;bottom:0;width:8px;height:8px;cursor:se-resize}
+  body:has(.M-mini) .wrz:is([data-edge=n],[data-edge=s],[data-edge=nw],[data-edge=ne],[data-edge=sw],[data-edge=se]){display:none}
+  body:has(.M-mini) .wrz:is([data-edge=w],[data-edge=e]){top:0;bottom:0}
+</style>
+</head>
+<body class="pywebview-drag-region">
+<div class="wrz" data-edge="n"></div><div class="wrz" data-edge="s"></div><div class="wrz" data-edge="w"></div><div class="wrz" data-edge="e"></div>
+<div class="wrz" data-edge="nw"></div><div class="wrz" data-edge="ne"></div><div class="wrz" data-edge="sw"></div><div class="wrz" data-edge="se"></div>
+<div class="w pywebview-drag-region" id="w">
+  <div class="hd pywebview-drag-region">
+    <img src="img/logo_emblem.png" class="logo" alt="RsHub" style="width:16px;height:16px;object-fit:contain;">
+    <span>RsHub</span><span class="sp pywebview-drag-region"></span>
+    <button id="sizeBtn" title="Small version" data-t-attr="title"><svg class="i" viewBox="0 0 24 24"><path d="M4 14h6v6M20 10h-6V4M14 10l6-6M10 14l-6 6"/></svg></button>
+    <button id="openMain" title="Open RsHub" data-t-attr="title"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button>
+    <button id="close" title="Close the widget" data-t-attr="title"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div id="rows" class="pywebview-drag-region"></div>
+</div>
+<script src="js/i18n.js"></script>
+<script src="js/core.js"></script>
+<script src="js/telemetry.js"></script>
+<script src="js/widget.js"></script>
+</body>
+</html>

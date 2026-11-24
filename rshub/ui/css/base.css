@@ -1,0 +1,652 @@
+/* RsHub · base styles: tokens, shell (top bar, dock, floating panels) and reusable pieces. */
+@font-face{font-family:'Onest';src:url(../fonts/onest-latin.woff2) format('woff2');font-weight:100 900;font-display:block;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Onest';src:url(../fonts/onest-latin-ext.woff2) format('woff2');font-weight:100 900;font-display:block;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Unbounded';src:url(../fonts/unbounded-latin.woff2) format('woff2');font-weight:200 900;font-display:block;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Unbounded';src:url(../fonts/unbounded-latin-ext.woff2) format('woff2');font-weight:200 900;font-display:block;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+:root{
+  --void:#000000; --deep:#080A10; --raise:rgba(158,190,240,.045); --raise2:rgba(158,190,240,.085); --raise3:rgba(158,190,240,.13);
+  --line:rgba(170,200,245,.105); --line2:rgba(170,200,245,.2);
+  /* text tiers: ink (content), mute (secondary, ~7:1), faint (metadata, still >= 4.5:1 on a panel) */
+  --ink:#E9EEF7; --mute:#97A3BA; --faint:#7683A0;
+  --accent:#00F0D0; --accent2:#FFFFFF; --on-accent:#1C0A06;
+  --ok:#7FE0B4; --warn:#F4C26B; --bad:#FF6B7A;
+  --f:1;
+  --display:'UnbZero','Unbounded','Microsoft YaHei UI','Microsoft YaHei',system-ui,sans-serif; --text:'Onest','Microsoft YaHei UI','Microsoft YaHei',system-ui,sans-serif;
+  --r-l:22px; --r-m:14px; --r-s:9px; --r-xs:5px; --r-pill:999px;
+  /* spacing steps (DESIGN.md): xs 4, sm 8, md 14, lg 18, xl 26 */
+  --sp-xs:4px; --sp-sm:8px; --sp-md:14px; --sp-lg:18px; --sp-xl:26px;
+  --top:62px; --dockspace:118px;
+  /* type roles: the display face (Unbounded) only from --fs-lg up; everything smaller is Onest */
+  --fs-cap:11.5px; --fs-sm:12.5px; --fs-body:13.5px; --fs-lg:15px; --fs-h3:17px; --fs-h2:21px; --fs-h1:28px;
+  /* display numerals: the big figures of tiles, rings and results (Unbounded) */
+  --fs-n1:24px; --fs-n2:32px; --fs-n3:40px; --fs-n4:52px;
+  /* icons: 24-unit drawings, one 1.4 px line at every size (non-scaling stroke), seven sizes */
+  --ic-xs:12px; --ic-s:14px; --ic-m:16px; --ic-l:18px; --ic-xl:20px; --ic-2xl:24px; --ic-3xl:28px; --ic-w:1.4px; --ic-w-bold:1.9px;
+  /* one curve family: arrivals decelerate (expo), controls settle (quint), travel eases both ways. No overshoot. */
+  --e-out:cubic-bezier(.16,1,.3,1); --e-snap:cubic-bezier(.22,1,.36,1); --e-io:cubic-bezier(.65,0,.35,1);
+  /* derived accent states (follow the user's accent colours) */
+  --acc-soft:color-mix(in oklab,var(--accent) 12%,transparent); --acc-line:color-mix(in oklab,var(--accent) 42%,transparent);
+  --ice-soft:color-mix(in oklab,var(--accent2) 10%,transparent); --ice-line:color-mix(in oklab,var(--accent2) 34%,transparent);
+  /* observatory glass: dark glass lit from above by the nebula, a rim of light on its top edge, a soft offset shadow */
+  --sheen:linear-gradient(180deg,color-mix(in oklab,var(--accent2) 6%,transparent),transparent 150px);
+  --rim:inset 0 1px 0 rgba(214,232,255,.08);
+  --lift:0 24px 48px -28px rgba(0,0,0,.85),0 2px 8px -3px rgba(0,0,0,.4);
+  --lift-hi:0 44px 100px -34px rgba(0,0,0,.92),0 10px 26px -14px rgba(0,0,0,.55);
+}
+/* Japanese: Japanese glyph shapes for kanji (Microsoft YaHei draws them the Chinese way) */
+:root:lang(ja){--display:'UnbZero','Unbounded','Yu Gothic UI','Meiryo UI',system-ui,sans-serif; --text:'Onest','Yu Gothic UI','Meiryo UI',system-ui,sans-serif}
+html[data-theme=dusk]{
+  --void:#000000; --deep:#101420; --raise:rgba(185,208,250,.06); --raise2:rgba(185,208,250,.11); --raise3:rgba(185,208,250,.16);
+  --line:rgba(190,212,250,.14); --line2:rgba(190,212,250,.26); --ink:#EEF2F9; --mute:#A6B2C8; --faint:#8794AF;
+}
+html[data-theme=eclipse]{
+  --void:#000000; --deep:#090C12; --raise:rgba(158,190,240,.04); --raise2:rgba(158,190,240,.075); --raise3:rgba(158,190,240,.11);
+  --line:rgba(170,200,245,.09); --line2:rgba(170,200,245,.18);
+}
+html[data-density=compact]{--r-l:18px;--r-m:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:#000000;color:var(--ink);font:400 13.5px/1.45 var(--text);font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;user-select:none;transition:background-color calc(600ms*var(--f))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+[hidden]{display:none!important}
+input,textarea{user-select:text}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:3px;border-radius:10px}
+::selection{background:color-mix(in oklab,var(--accent2) 32%,transparent);color:var(--ink)}
+input,textarea{caret-color:var(--accent)}
+svg.i{width:var(--ic-l);height:var(--ic-l);fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.i :is(path,circle,rect,ellipse,line,polyline,polygon){vector-effect:non-scaling-stroke}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--raise3);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:var(--line2)}
+::-webkit-scrollbar-track{background:transparent}
+
+.atmo{display:none !important}
+#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ---------- top bar ---------- */
+.top{position:fixed;top:0;left:0;right:0;height:var(--top);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;padding:0 22px;z-index:40}
+body.frameless .top{padding-right:10px}
+/* the zero of the display font looks like a capital O ("O apps", "O %"): a copy of the same glyph with a slash, for that digit only */
+@font-face{font-family:'UnbZero';src:url(../fonts/unbounded-zero.woff2) format('woff2');font-weight:200 900;font-display:block;unicode-range:U+0030}
+.brand{display:flex;align-items:center;gap:10px;font:500 15px var(--display);letter-spacing:-.01em;justify-self:start;cursor:pointer}
+.brand svg,.brand img{width:26px;height:26px;transition:transform calc(350ms*var(--f)) cubic-bezier(.2,.9,.25,1);object-fit:contain}
+.brand:hover svg,.brand:hover img{transform:scale(1.1)}
+.search{width:min(480px,36vw);height:38px;border-radius:999px;background:var(--raise);border:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;padding:0 8px 0 14px;color:var(--mute);
+  transition:transform calc(160ms*var(--f)) var(--e-snap),background-color calc(160ms*var(--f)),border-color calc(160ms*var(--f))}
+.search:hover{background:var(--raise2);border-color:var(--line2);color:var(--ink)}
+.search:active{transform:scale(.975)}
+.kbd{margin-left:auto;font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);color:var(--mute)}
+.right{justify-self:end;display:flex;justify-content:flex-end;align-items:center;gap:8px;position:relative}
+
+/* custom frame: window buttons and resize edges (inside the app only) */
+.winctl{display:none;align-items:center;gap:2px;margin-left:6px;padding-left:10px;border-left:1px solid var(--line);height:26px}
+body.frameless .winctl{display:flex}
+.wc{width:38px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--mute);
+  transition:color calc(140ms*var(--f)),background-color calc(140ms*var(--f)),transform calc(140ms*var(--f))}
+.wc svg{width:16px;height:16px;stroke-width:1.5}
+.wc:hover{color:var(--ink);background:var(--raise2)}
+.wc:active{transform:scale(.92)}
+.wc.close:hover{background:color-mix(in oklab,var(--bad) 80%,transparent);color:#fff}
+.rz{position:fixed;z-index:200;display:none}
+body.frameless:not(.win-max) .rz{display:block}
+.rz[data-edge=n]{top:0;left:10px;right:10px;height:5px;cursor:n-resize}
+.rz[data-edge=s]{bottom:0;left:10px;right:10px;height:5px;cursor:s-resize}
+.rz[data-edge=w]{left:0;top:10px;bottom:10px;width:5px;cursor:w-resize}
+.rz[data-edge=e]{right:0;top:10px;bottom:10px;width:5px;cursor:e-resize}
+.rz[data-edge=nw]{left:0;top:0;width:10px;height:10px;cursor:nw-resize}
+.rz[data-edge=ne]{right:0;top:0;width:10px;height:10px;cursor:ne-resize}
+.rz[data-edge=sw]{left:0;bottom:0;width:10px;height:10px;cursor:sw-resize}
+.rz[data-edge=se]{right:0;bottom:0;width:10px;height:10px;cursor:se-resize}
+.mode{height:34px;display:flex;align-items:center;gap:8px;padding:0 13px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:12.5px;white-space:nowrap;flex:0 1 auto;min-width:0;
+  transition:background-color calc(200ms*var(--f)),color calc(200ms*var(--f)),border-color calc(200ms*var(--f)),transform calc(160ms*var(--f))}
+.mode:hover{background:var(--raise2);color:var(--ink)}
+.mode:active{transform:scale(.96)}
+.mode #modeTxt{overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.mode .d{flex:none;width:16px;height:16px;display:grid;place-items:center;color:var(--faint);transition:color calc(300ms*var(--f))}
+.mode .d svg{width:16px;height:16px}
+.mode:hover .d{color:var(--mute)}
+.mode.admin{color:var(--ink);border-color:color-mix(in oklab,var(--accent) 45%,transparent)}
+.mode.admin .d{color:var(--accent)}
+.iconbtn{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;color:var(--mute);transition:color calc(160ms*var(--f)),background-color calc(160ms*var(--f)),transform calc(160ms*var(--f))}
+.iconbtn:hover{color:var(--ink);background:var(--raise2)}
+.iconbtn:active{transform:scale(.92)}
+.iconbtn svg{width:19px;height:19px}
+#gearBtn svg{transition:transform calc(600ms*var(--f)) cubic-bezier(.2,.9,.25,1)}
+#gearBtn:hover svg{transform:rotate(60deg)}
+.note{position:absolute;top:46px;right:44px;width:min(300px,calc(100vw - 40px));padding:15px 15px 13px;border-radius:var(--r-m);background:var(--sheen),var(--deep);border:1px solid var(--line2);
+  box-shadow:var(--rim),0 18px 50px -18px rgba(0,0,0,.7);opacity:0;pointer-events:none;transform-origin:85% 0;z-index:5}
+.note.on{pointer-events:auto}
+.note p{color:var(--mute);font-size:12.5px;margin-bottom:12px}
+.note p b{color:var(--ink);font-weight:500}
+.note-never{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--faint);margin-top:10px;padding:2px 6px 2px 0;border-radius:var(--r-s);text-align:left}
+.note-never:hover .check{border-color:color-mix(in oklab,var(--ink) 40%,transparent)}
+.row-btns{display:flex;gap:8px}
+
+/* ---------- buttons and common controls ---------- */
+.btn{height:34px;padding:0 15px;border-radius:var(--r-s);font-weight:500;font-size:var(--fs-sm);display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-sm);white-space:nowrap;
+  transition:transform calc(140ms*var(--f)) var(--e-snap),background-color calc(160ms*var(--f)),filter calc(160ms*var(--f)),color calc(160ms*var(--f)),border-color calc(160ms*var(--f))}
+.btn:active{transform:scale(.95)}
+.btn svg{width:var(--ic-m);height:var(--ic-m)}
+.btn.pri{background:linear-gradient(180deg,color-mix(in oklab,var(--accent) 88%,#fff),var(--accent) 60%);color:var(--on-accent);font-weight:600}
+.btn.pri:hover{filter:brightness(1.06)}
+.btn.sec{background:var(--sheen),var(--raise2);color:var(--ink);border:1px solid var(--line)}
+.btn.sec:hover{background:var(--raise3);border-color:var(--line2)}
+.btn.ghost{color:var(--mute)}
+.btn.ghost:hover{color:var(--ink);background:var(--raise2)}
+.btn.danger{background:color-mix(in oklab,var(--bad) 18%,transparent);color:var(--bad);border:1px solid color-mix(in oklab,var(--bad) 35%,transparent)}
+.btn.danger:hover{background:color-mix(in oklab,var(--bad) 26%,transparent)}
+.btn.lg{height:40px;padding:0 20px;font-size:var(--fs-body);border-radius:var(--r-m)}
+.btn.sm{height:28px;padding:0 11px;font-size:var(--fs-sm);border-radius:var(--r-s)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:3px;border-radius:var(--r-m);background:var(--raise);border:1px solid var(--line)}
+.seg button{position:relative;z-index:1;height:32px;padding:0 10px;border-radius:var(--r-s);font-size:var(--fs-sm);color:var(--mute);transition:color calc(200ms*var(--f));white-space:nowrap}
+.seg button:hover{color:var(--ink)}
+.seg button.on{color:var(--ink)}
+.seg .ind{position:absolute;top:3px;bottom:3px;left:3px;border-radius:var(--r-s);background:var(--sheen),var(--raise3);border:1px solid var(--line2);box-shadow:var(--rim);will-change:transform}
+.toggle{width:42px;height:24px;flex:none;border-radius:var(--r-pill);background:var(--raise2);border:1px solid var(--line2);position:relative;transition:background-color calc(220ms*var(--f))}
+.toggle i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--mute);box-shadow:0 2px 5px -1px rgba(0,0,0,.5);transition:transform calc(300ms*var(--f)) var(--e-snap),background-color calc(200ms*var(--f)),width calc(160ms*var(--f))}
+.toggle:active i{width:22px}
+/* hover: the switch's edge and thumb light up a little (off), the coral track deepens (on) */
+.toggle{transition:background-color calc(220ms*var(--f)),border-color calc(160ms*var(--f))}
+.toggle:hover{border-color:color-mix(in oklab,var(--ink) 34%,transparent)}
+.toggle:not(.on):hover i{background:color-mix(in oklab,var(--ink) 80%,var(--mute))}
+.toggle.on:hover{background:color-mix(in oklab,var(--accent) 42%,transparent)}
+.toggle.on{background:color-mix(in oklab,var(--accent) 32%,transparent);border-color:var(--acc-line)}
+.toggle.on i{transform:translateX(18px);background:var(--accent)}
+.toggle.on:active i{transform:translateX(14px)}
+.check{width:18px;height:18px;flex:none;border-radius:var(--r-s);border:1.5px solid var(--line2);display:grid;place-items:center;transition:background-color calc(160ms*var(--f)),border-color calc(160ms*var(--f))}
+.check svg{width:var(--ic-s);height:var(--ic-s);stroke-width:var(--ic-w-bold);color:var(--on-accent);stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset calc(260ms*var(--f)) cubic-bezier(.2,.9,.3,1)}
+.check:hover{border-color:color-mix(in oklab,var(--ink) 40%,transparent)}
+.check.on{background:var(--accent);border-color:var(--accent)}
+.check.on svg{stroke-dashoffset:0}
+.chip{height:26px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;border-radius:var(--r-pill);font-size:var(--fs-sm);color:var(--mute);background:var(--raise);border:1px solid var(--line);white-space:nowrap}
+.chip.ok{color:var(--ok);border-color:color-mix(in oklab,var(--ok) 30%,transparent);background:color-mix(in oklab,var(--ok) 8%,transparent)}
+.chip.warn{color:var(--warn);border-color:color-mix(in oklab,var(--warn) 30%,transparent);background:color-mix(in oklab,var(--warn) 8%,transparent)}
+.chip.bad{color:var(--bad);border-color:color-mix(in oklab,var(--bad) 30%,transparent);background:color-mix(in oklab,var(--bad) 8%,transparent)}
+.chip.acc{color:var(--accent);border-color:color-mix(in oklab,var(--accent) 30%,transparent);background:color-mix(in oklab,var(--accent) 8%,transparent)}
+/* language picker (Settings > General) */
+.langs{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:var(--sp-sm)}
+.lang{position:relative;display:flex;align-items:center;gap:var(--sp-md);padding:10px 12px;border-radius:var(--r-m);background:var(--raise);border:1px solid var(--line);text-align:left;
+  transition:border-color calc(160ms*var(--f)),background-color calc(160ms*var(--f)),transform calc(260ms*var(--f)) var(--e-snap)}
+.lang:hover{background:var(--raise2);border-color:var(--line2)}
+.lang:active{transform:scale(.98)}
+.lang.on{border-color:color-mix(in oklab,var(--accent) 70%,transparent);background:color-mix(in oklab,var(--accent) 9%,var(--raise))}
+.lang>span:not(.flag){display:flex;flex-direction:column;min-width:0;flex:1}
+.lang b{font-weight:500;font-size:var(--fs-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lang small{font-size:var(--fs-cap);line-height:1.3;color:var(--faint)} /* may wrap: translations run longer */
+.lang>svg{width:var(--ic-m);height:var(--ic-m);color:var(--accent);opacity:0;transform:scale(.5);transition:opacity calc(160ms*var(--f)),transform calc(240ms*var(--f)) var(--e-snap)}
+.lang.on>svg{opacity:1;transform:none}
+.flag{flex:none;width:27px;height:18px;border-radius:var(--r-xs);overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center}
+.flag svg{width:100%;height:100%;display:block}
+.flag.auto{background:var(--raise2);color:var(--accent2)}
+.flag.auto svg{width:var(--ic-s);height:var(--ic-s)}
+/* custom dropdown (js/select.js): the native <select> stays hidden underneath */
+.csel-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;padding:0!important;border:0!important}
+.csel{display:inline-flex;align-items:center;gap:var(--sp-sm);height:32px;padding:0 10px 0 12px;border-radius:var(--r-s);background:var(--raise);border:1px solid var(--line);color:var(--ink);font-size:var(--fs-sm);cursor:pointer;text-align:left;max-width:100%;
+  transition:border-color calc(150ms*var(--f)),background-color calc(150ms*var(--f))}
+.csel:hover,.csel.open,.csel:focus-visible{border-color:var(--line2);outline:0}
+.csel:disabled{opacity:.55;cursor:default}
+.csel-v{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.csel-chev{width:14px;height:14px;color:var(--faint);flex:none;transition:transform calc(260ms*var(--f)) var(--e-snap)}
+.csel.open .csel-chev{transform:rotate(180deg)}
+.csel-pop{position:fixed;z-index:1000;padding:5px;border-radius:var(--r-m);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;
+  background:color-mix(in oklab,var(--deep) 94%,var(--accent2) 6%);border:1px solid var(--line2);box-shadow:var(--rim),0 22px 60px -14px rgba(0,0,0,.75),0 4px 10px -4px rgba(0,0,0,.4)}
+.csel-o{display:flex;align-items:center;gap:var(--sp-md);width:100%;min-height:32px;padding:0 10px;border-radius:var(--r-s);color:var(--mute);font-size:var(--fs-sm);text-align:left;white-space:nowrap;
+  transition:background-color calc(120ms*var(--f)),color calc(120ms*var(--f))}
+.csel-o span{flex:1}
+.csel-o.act{background:var(--raise2);color:var(--ink)}
+.csel-o.on{color:var(--ink);font-weight:500}
+.csel-o svg{width:var(--ic-s);height:var(--ic-s);color:var(--accent);opacity:0;transform:scale(.6);transition:opacity calc(160ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+.csel-o.on svg{opacity:1;transform:none}
+.csel-o:disabled{opacity:.4;cursor:default}
+.field{height:36px;display:flex;align-items:center;gap:var(--sp-sm);padding:0 12px;border-radius:var(--r-s);background:var(--raise);border:1px solid var(--line);color:var(--mute);transition:border-color calc(160ms*var(--f)),background-color calc(160ms*var(--f))}
+.field:focus-within{border-color:var(--line2);background:var(--raise2)}
+.field input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink)}
+.field input::placeholder{color:var(--faint)}
+.field.csel{color:var(--ink)}
+.field .csel{background:none;border:0;height:auto;padding:0;border-radius:0;flex:1;min-width:0}
+.field:has(>.csel:not(:disabled)):hover{border-color:var(--line2)}
+.field:has(>.csel){cursor:pointer}
+.bar{height:6px;border-radius:var(--r-s);background:var(--raise2);overflow:hidden}
+.bar>span{display:block;height:100%;width:100%;transform-origin:0 50%;border-radius:var(--r-s);background:var(--accent2);will-change:transform;transform:scaleX(var(--v,0));transition:transform calc(700ms*var(--f)) cubic-bezier(.16,1,.3,1)}
+.bar.acc>span{background:var(--accent)} .bar.ok>span{background:var(--ok)} .bar.warn>span{background:var(--warn)} .bar.bad>span{background:var(--bad)}
+
+/* panels: the common frame for anything that groups content */
+.pan{border-radius:var(--r-l);background:var(--raise);border:1px solid var(--line);padding:16px 18px;position:relative;min-height:0;
+  box-shadow:var(--rim),var(--lift)}
+.pan .pan{box-shadow:var(--rim)}
+.subnav,.search,.mode{box-shadow:0 14px 30px -18px rgba(0,0,0,.7)}
+.btn.pri{box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 10px 20px -12px rgba(0,0,0,.8),0 2px 6px -3px rgba(0,0,0,.5)}
+.btn.sec{box-shadow:var(--rim),0 10px 22px -14px rgba(0,0,0,.7)}
+.mhead h1 .chip{vertical-align:middle;margin-left:12px;font:500 var(--fs-cap) var(--text);letter-spacing:0;position:relative;top:-3px}
+.pan>h4,.pan-h{font-size:var(--fs-sm);font-weight:600;letter-spacing:.005em;color:color-mix(in oklab,var(--ink) 86%,var(--mute));display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:12px}
+.pan>h4 em,.pan-h em{font-style:normal;font-weight:400;letter-spacing:0;margin-left:auto;color:var(--faint);font-size:var(--fs-cap)}
+.big{font:500 var(--fs-n3)/1 var(--display);letter-spacing:-.04em}
+.big small{font-size:var(--fs-lg);color:var(--mute);letter-spacing:0;margin-left:4px}
+.muted{color:var(--mute)} .faint{color:var(--faint)}
+
+/* list / table rows */
+.rows{display:flex;flex-direction:column;gap:var(--sp-xs)}
+.row{display:flex;align-items:center;gap:var(--sp-md);padding:10px 12px;border-radius:var(--r-m);transition:background-color calc(150ms*var(--f)),transform calc(200ms*var(--f)) var(--e-snap)}
+.row:hover{background:var(--raise2)}
+.row .ri{width:34px;height:34px;flex:none;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2);color:var(--ink)}
+.row .rt{flex:1;min-width:0}
+.row .rt b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .rt span{display:block;font-size:var(--fs-sm);color:var(--mute);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbl-head{display:flex;gap:var(--sp-md);padding:0 12px 8px;font-size:var(--fs-cap);font-weight:500;color:var(--faint);border-bottom:1px solid var(--line);margin-bottom:6px}
+.empty{padding:40px 20px;text-align:center;color:var(--mute);text-wrap:pretty}
+.empty b{display:block;color:var(--ink);font-weight:600;font-size:var(--fs-lg);margin-bottom:6px;text-wrap:balance}
+/* empty state (SH.emptyState): a small orbit scene, one line, one next step */
+.es{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:var(--sp-xl) var(--sp-lg);margin-inline:auto;max-width:520px}
+.es-art{position:relative;display:inline-flex;align-items:center;justify-content:center;width:110px;height:110px;margin-bottom:var(--sp-md);overflow:visible}
+.es-img{width:96px;height:96px;object-fit:contain;image-rendering:-webkit-optimize-contrast;filter:drop-shadow(0 2px 16px rgba(255,255,255,.22));transition:transform .2s ease}
+.es-sm .es-art{width:76px;height:76px;margin-bottom:var(--sp-sm)}
+.es-sm .es-img{width:64px;height:64px}
+.es-badge{position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.6)}
+.es-badge.ok{background:var(--ok);color:var(--void)}
+.es-badge.err{background:var(--warn);color:var(--void)}
+.es b{margin-bottom:var(--sp-xs)}
+.es p{max-width:46ch;font-size:var(--fs-body);line-height:1.5}
+.es-act{margin-top:var(--sp-md);display:flex;gap:var(--sp-sm);justify-content:center;flex-wrap:wrap}
+.es-sm{padding:var(--sp-lg) var(--sp-md)}
+.es-sm .es-art{width:100px;height:63px;margin-bottom:var(--sp-sm)}
+.es-sm b{font-size:var(--fs-body)}
+.es-sm p{font-size:var(--fs-sm)}
+/* engine text in a sentence (a path, a registry key, a hash, a URL: one long word) wraps instead of running out of an
+   empty state, a dialog or a popover */
+:is(.es,.empty,.note,.bug-pop,.dq,.bk-dq,.mdlg .box,.hg-dbox,.u-cbox,.su-box,.qz-note) :is(p,h3,li),.es>b{overflow-wrap:anywhere}
+/* results kept from an earlier analysis (SH.lastRun): their age and the button that analyzes again */
+/* the last-analysis strip (SH.lastRun): a fixed 28 px clock box, then the text column (min-width:0 so it ellipsizes
+   instead of pushing), then the button; children are matched with > so a module class (cls) can never re-lay them out */
+.lastrun{display:flex;align-items:center;gap:var(--sp-md);padding:8px 10px 8px 10px;border-radius:var(--r-m);border:1px solid color-mix(in oklab,var(--accent2) 22%,var(--line));background:color-mix(in oklab,var(--accent2) 6%,var(--raise));min-width:0;text-align:left}
+.lastrun>.lr-i{flex:0 0 28px;display:grid;place-items:center;width:28px;height:28px;border-radius:var(--r-s);color:var(--accent2);background:color-mix(in oklab,var(--accent2) 12%,transparent)}
+.lastrun .lr-i svg{width:var(--ic-m);height:var(--ic-m)}
+.lastrun>.lr-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:1px;line-height:1.3}
+.lastrun .lr-t>b{font-weight:600;font-size:var(--fs-sm);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lastrun .lr-t>span{font-size:var(--fs-cap);color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lastrun>.btn{flex:none}
+
+/* loading skeletons */
+.sk{position:relative;overflow:hidden;background:var(--raise);border-radius:var(--r-s)}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(100deg,transparent 20%,color-mix(in oklab,var(--ink) 7%,transparent) 50%,transparent 80%);
+  animation:sweep calc(1700ms*var(--f) + 400ms) cubic-bezier(.45,0,.2,1) infinite;animation-delay:var(--dl,0s)}
+html[data-int=min] .sk::after{animation:none}
+@keyframes sweep{to{transform:translateX(100%)}}
+.sk-rows{display:flex;flex-direction:column;gap:var(--sp-sm)}
+.sk-row{display:flex;align-items:center;gap:var(--sp-md);padding:12px 14px;border-radius:var(--r-m);border:1px solid var(--line)}
+.sk-row .a{width:30px;height:30px;border-radius:var(--r-s)}
+.sk-row .b{height:10px;flex:0 0 var(--w)}
+.sk-row .c{height:10px;width:70px;margin-left:auto}
+
+/* ---------- views and modules ---------- */
+#views{position:fixed;inset:var(--top) 0 0 0}
+.view{position:absolute;inset:0;visibility:hidden;pointer-events:none}
+.view.is-on{visibility:visible;pointer-events:auto}
+/* a module that is not on screen keeps its DOM and its layout but is not rendered: visibility alone still had every
+   visited module's subtree styled, painted and animated each frame (Home idle went from 46 % to 86 % of a core in the
+   WebView2 processes after visiting the modules; 37 % with this). The leaving view keeps .is-on until its fade ends. */
+.view:not(.is-on){content-visibility:hidden}
+.mod{position:absolute;inset:6px 30px var(--dockspace);display:flex;flex-direction:column}
+.mhead{display:flex;align-items:flex-end;gap:var(--sp-lg);margin-bottom:16px}
+.mhead .ttl{flex:1;min-width:0}
+.mhead h1{font:500 var(--fs-h1)/1.1 var(--display);letter-spacing:-.03em;white-space:nowrap}
+.mhead p{color:var(--mute);margin-top:8px;max-width:640px;text-wrap:pretty}
+.mhead .acts{display:flex;gap:var(--sp-sm);align-items:center;justify-content:flex-end;flex-wrap:wrap;min-height:34px}
+.subnav{position:relative;align-self:flex-start;display:flex;gap:2px;padding:4px;border-radius:var(--r-m);background:color-mix(in oklab,var(--deep) 55%,var(--raise));border:1px solid var(--line);margin-bottom:18px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.subnav::-webkit-scrollbar{display:none}
+.subnav button{position:relative;z-index:1;height:34px;padding:0 15px;border-radius:var(--r-s);font-size:var(--fs-body);color:var(--mute);white-space:nowrap;display:flex;align-items:center;gap:var(--sp-sm);transition:color calc(180ms*var(--f))}
+.subnav button[hidden],.subnav[hidden]{display:none}
+.subnav button:hover{color:var(--ink)}
+.subnav button.on{color:var(--ink)}
+.subnav button .bd{min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-s);font-size:var(--fs-cap);display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:700}
+.subnav button .bd[hidden]{display:none}
+.subnav .ind{position:absolute;left:0;top:4px;height:34px;border-radius:var(--r-s);background:var(--sheen),var(--raise3);border:1px solid var(--line2);box-shadow:var(--rim),0 6px 14px -8px rgba(0,0,0,.7);will-change:transform,width;pointer-events:none}
+.tabs{position:relative;flex:1;min-height:0}
+.tab{position:absolute;inset:0 -10px;overflow:auto;visibility:hidden;padding:2px 2px 14px 2px;scrollbar-gutter:stable both-edges}
+.tab.fill{padding-bottom:8px}
+
+/* fade on scrollable areas: at the top only once you have scrolled, at the bottom only if there is more content.
+   core.js adds it to any vertically scrolling container without its own background or border. */
+@property --sft{syntax:'<length>';inherits:false;initial-value:0px}
+@property --sfb{syntax:'<length>';inherits:false;initial-value:0px}
+.sf{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--sft),#000 calc(100% - var(--sfb)),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 var(--sft),#000 calc(100% - var(--sfb)),transparent 100%);
+  transition:--sft calc(220ms*var(--f)) ease-out,--sfb calc(220ms*var(--f)) ease-out}
+.sf.sf-t{--sft:28px}
+.sf.sf-b{--sfb:40px}
+.tab.on{visibility:visible}
+.tab.fill{overflow:hidden}
+
+/* ---------- dock ---------- */
+.dock{contain:layout style;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);display:flex;align-items:flex-end;gap:var(--sp-xs);padding:8px;border-radius:var(--r-l);z-index:40;border:1px solid transparent;--dkw:0;--dkh:0}
+/* the pill is drawn by ::before so it can grow with the magnified icons (--dkw wider, --dkh taller, set by shell.js) without
+   laying the buttons out again: only this one empty box changes size */
+.dock::before{content:"";position:absolute;inset:calc(-1px - var(--dkh)*1px) calc(-1px - var(--dkw)*.5px) -1px;z-index:-1;border-radius:inherit;
+  background:var(--sheen),color-mix(in oklab,var(--deep) 93%,transparent);border:1px solid var(--line);box-shadow:var(--rim),0 24px 50px -22px rgba(0,0,0,.85),0 4px 12px -6px rgba(0,0,0,.5)}
+.dk{position:relative;isolation:isolate;width:52px;height:52px;flex:none;display:grid;place-items:center;border-radius:var(--r-m);color:var(--mute);
+  --dv:1;--dx:0;--dkr:var(--r-m);translate:calc(var(--dx)*1px) 0;transition:color calc(200ms*var(--f))}
+/* the magnification (shell.js sets --dv, the size factor, and --dx, the shift from the neighbours growing) is transform-only:
+   the button keeps its 52 px layout box, its backdrop (::before) is scaled from the bottom centre, the icon and the tooltip follow */
+.dk::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:calc(var(--dkr)/var(--dv));background:transparent;transform-origin:50% 100%;
+  transform:scale(var(--dv));transition:background-color calc(200ms*var(--f))}
+.dk:hover{color:var(--ink)}
+.dk:hover::before,.dk.on::before{background:var(--raise2)}
+.dk>svg{width:var(--ic-2xl);height:var(--ic-2xl);transform:translateY(calc((1 - var(--dv))*26px)) scale(calc(.85 + .15*var(--dv)))}
+.tip{position:absolute;bottom:calc(100% + 14px);left:50%;white-space:nowrap;padding:6px 11px;border-radius:var(--r-s);background:var(--ink);color:var(--void);
+  font-size:var(--fs-sm);font-weight:500;opacity:0;pointer-events:none;transform:translate(-50%,6px) scale(.92);
+  transition:opacity calc(140ms*var(--f)),transform calc(200ms*var(--f)) var(--e-snap)}
+.dk:hover .tip{opacity:1;transform:translate(-50%,0) scale(1)}
+.dk .tip{translate:0 calc((1 - var(--dv))*52px)}
+.dock .dot{position:absolute;bottom:5px;left:0;width:18px;height:3px;border-radius:var(--r-xs);background:var(--accent);will-change:transform}
+.dock .sep{width:1px;height:28px;background:var(--line);margin:0 6px 12px;flex:none;--dx:0;translate:calc(var(--dx)*1px) 0}
+/* activity on a dock icon (shell.js paintDockActs): a thin ring around the icon while the module works on something the
+   user started and they are elsewhere, then a small badge when it ends there. .dka follows the icon's own transform, so
+   the magnification carries it; only transform, opacity and stroke-dashoffset ever change. */
+.dka{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;transform:translateY(calc((1 - var(--dv))*26px)) scale(calc(.85 + .15*var(--dv)));--p:0}
+.dka>svg{grid-area:1/1;width:44px;height:44px;overflow:visible;fill:none;opacity:0;transform:scale(.86);
+  transition:opacity calc(260ms*var(--f)) var(--e-out),transform calc(420ms*var(--f)) var(--e-out)}
+.dka .tr{stroke:var(--line2);stroke-width:1.6}
+.dka .arc{stroke:var(--accent2);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:calc(100 - var(--p)*100);
+  transition:stroke-dashoffset calc(520ms*var(--f)) var(--e-out),stroke calc(260ms*var(--f))}
+.dk:is([data-act=run],[data-act=fin]):not(.on) .dka>svg{opacity:1;transform:none}
+/* not measurable yet: a short arc in a slow, steady orbit (still at intensity minimum and with reduced motion) */
+.dk.ind .dka .arc{stroke-dashoffset:78}
+.dk.ind:not(.on)[data-act=run] .dka>svg{animation:dka-orbit calc(3200ms/max(var(--f),.5)) linear infinite}
+@keyframes dka-orbit{from{rotate:0deg}to{rotate:360deg}}
+.dk[data-act=fin] .dka .arc{stroke:var(--ok)}
+.dk[data-act=fin][data-res=err] .dka .arc{stroke:var(--warn)}
+/* the badge: a filled dot with a bold mark, on the ring's upper right; it stays until the module is visited */
+.dkb{grid-area:1/1;justify-self:end;align-self:start;margin:2px 3px 0 0;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
+  background:var(--ok);color:var(--void);box-shadow:0 0 0 2px var(--deep);opacity:0;transform:scale(.3);
+  transition:opacity calc(220ms*var(--f)),transform calc(260ms*var(--f)) var(--e-out)}
+.dkb svg.i{width:10px;height:10px;stroke-width:var(--ic-w-bold)}
+.dk[data-act=err] .dkb{background:var(--warn)}
+.dk:is([data-act=ok],[data-act=err]) .dkb{opacity:1;transform:none}
+.dk[data-act] .tip{max-width:min(380px,60vw);overflow:hidden;text-overflow:ellipsis}
+html[data-int=min] .dka>svg,html[data-int=min] .dkb{transition-duration:1ms}
+html[data-int=min] .dk.ind .dka>svg{animation:none!important}
+@media (prefers-reduced-motion:reduce){.dk.ind .dka>svg{animation:none!important}}
+
+/* ---------- layers: palette, settings, toasts ---------- */
+.overlay{position:fixed;inset:0;z-index:60;visibility:hidden}
+.overlay.on{visibility:visible}
+.scrim{position:absolute;inset:0;background:rgba(3,5,11,.55);opacity:0}
+.pal{position:absolute;left:50%;top:84px;width:min(640px,92vw);margin-left:calc(min(640px,92vw)/-2);border-radius:var(--r-l);background:var(--sheen),var(--deep);border:1px solid var(--line2);
+  box-shadow:var(--rim),var(--lift-hi);overflow:hidden;opacity:0;transform-origin:50% 0}
+.pal .in{display:flex;align-items:center;gap:var(--sp-md);padding:0 18px;height:58px;border-bottom:1px solid var(--line);color:var(--mute)}
+.pal input{flex:1;background:none;border:0;outline:0;color:var(--ink);font:400 var(--fs-h3) var(--text)}
+.pal input::placeholder{color:var(--faint)}
+.pal .res{position:relative;max-height:min(440px,56vh);overflow:auto;padding:8px}
+.pal .grp{font-size:var(--fs-cap);font-weight:600;color:var(--faint);padding:12px 12px 5px}
+.pal .it{position:relative;z-index:1;display:flex;align-items:center;gap:var(--sp-md);width:100%;height:42px;padding:0 12px;border-radius:var(--r-s);text-align:left;color:var(--mute);transition:color calc(120ms*var(--f))}
+.pal .it.on{color:var(--ink)}
+.pal .it .ic{width:28px;height:28px;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2);transition:color calc(120ms*var(--f)),background-color calc(120ms*var(--f))}
+.pal .it.on .ic{color:var(--accent);background:var(--acc-soft)}
+.pal .it .ic svg{width:var(--ic-m);height:var(--ic-m)}
+.pal .it .path{color:var(--faint);font-size:var(--fs-sm)}
+.pal .it small{margin-left:auto;font-size:var(--fs-cap);color:var(--faint)}
+.pal .it small.pa{display:flex;align-items:center;gap:6px;color:var(--accent2);font-variant-numeric:tabular-nums}
+.pal .it small.pa svg{width:14px;height:14px;fill:none}
+.pal .pa .tr{stroke:var(--line2);stroke-width:1.6}
+.pal .pa .arc{stroke:var(--accent2);stroke-width:2;stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:calc(100 - var(--p,0)*100)}
+.pal .pa.ind .arc{stroke-dashoffset:75}
+.pal .pa.ind svg{animation:dka-orbit calc(3200ms/max(var(--f),.5)) linear infinite}
+html[data-int=min] .pal .pa.ind svg{animation:none}
+.pal .pa i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px color-mix(in oklab,var(--ok) 22%,transparent)}
+.pal .pa.ok,.pal .pa.err{color:var(--mute)}
+.pal .pa.err i{background:var(--warn);box-shadow:0 0 0 2px color-mix(in oklab,var(--warn) 22%,transparent)}
+@media (prefers-reduced-motion:reduce){.pal .pa.ind svg{animation:none}}
+.pal .hl{position:absolute;left:8px;right:8px;top:0;height:42px;border-radius:var(--r-s);background:var(--raise2);box-shadow:inset 0 0 0 1px var(--line);z-index:0;will-change:transform}
+.pal .empty{padding:26px 12px}
+.pal .foot{display:flex;gap:var(--sp-md);padding:9px 18px;border-top:1px solid var(--line);font-size:var(--fs-cap);color:var(--faint)}
+
+.sheet{position:absolute;top:12px;right:12px;bottom:12px;width:min(720px,calc(100vw - 24px));border-radius:var(--r-l);background:var(--sheen),var(--deep);border:1px solid var(--line2);
+  box-shadow:var(--rim),var(--lift-hi);opacity:0;display:grid;grid-template-columns:200px 1fr;overflow:hidden}
+.sheet nav{border-right:1px solid var(--line);background:color-mix(in oklab,var(--void) 35%,transparent);padding:22px 12px;display:flex;flex-direction:column;gap:2px;position:relative;overflow-y:auto;overflow-x:hidden;min-height:0;scrollbar-width:thin}
+.sheet nav>*{flex:none}
+.sheet nav h2{font:500 var(--fs-h2) var(--display);letter-spacing:-.02em;padding:0 10px 16px}
+.sheet nav button{position:relative;z-index:1;height:36px;border-radius:var(--r-s);padding:0 10px;display:flex;align-items:center;gap:var(--sp-sm);color:var(--mute);font-size:var(--fs-body);text-align:left;transition:color calc(160ms*var(--f))}
+.sheet nav button:hover,.sheet nav button.on{color:var(--ink)}
+.sheet nav button svg{width:var(--ic-m);height:var(--ic-m);flex:none}
+.sheet nav button span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet nav .ind{position:absolute;left:12px;right:12px;top:0;height:36px;border-radius:var(--r-s);background:var(--raise2);box-shadow:inset 0 0 0 1px var(--line);will-change:transform}
+.sheet nav .ver{margin-top:auto;padding:0 10px;font-size:var(--fs-cap);color:var(--faint)}
+.sheet .body{position:relative;overflow:auto;padding:24px 26px 30px}
+.sheet .x{position:absolute;top:14px;right:14px;z-index:3}
+.sheet .x:hover svg{transform:rotate(90deg)}
+.sheet .x svg{transition:transform calc(220ms*var(--f))}
+.sec h3{font:500 var(--fs-h3) var(--display);letter-spacing:-.02em;margin-bottom:6px}
+.sec>p{color:var(--mute);font-size:var(--fs-sm);margin-bottom:20px;max-width:62ch;text-wrap:pretty}
+.set{padding:16px 0;border-top:1px solid var(--line)}
+.set:first-of-type{border-top:0}
+.set .lbl{font-size:var(--fs-body);font-weight:500;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-md)}
+.set .lbl span{display:block;font-size:var(--fs-sm);font-weight:400;color:var(--faint);margin-top:3px;line-height:1.4}
+.set .lbl span.zn{color:var(--accent2)}
+.set .lbl span.zn:empty{display:none}
+.set.inline{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-md)}
+.set-note{font-size:var(--fs-sm);color:var(--faint);padding:12px 0 2px;border-top:1px solid var(--line);margin:0}
+.set.inline .lbl{margin:0}
+.set .hint{font-size:var(--fs-cap);color:var(--faint);margin-top:8px}
+.sw-row{display:flex;gap:var(--sp-sm);flex-wrap:wrap}
+.swatch{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--s) 50%,var(--s2) 50%);position:relative;transition:transform calc(220ms*var(--f)) var(--e-snap)}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px solid var(--s);opacity:0;transform:scale(.8);transition:opacity calc(200ms*var(--f)),transform calc(260ms*var(--f)) var(--e-snap)}
+.swatch.on::after{opacity:1;transform:scale(1)}
+.vcards{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-sm)}
+.vcard{text-align:left;padding:12px 14px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--raise);transition:border-color calc(180ms*var(--f)),background-color calc(180ms*var(--f)),transform calc(200ms*var(--f)) var(--e-snap)}
+.vcard:hover{background:var(--raise2);border-color:var(--line2)}
+.vcard.on{border-color:var(--acc-line);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc-line)}
+.vcard b{display:block;font-weight:500;font-size:var(--fs-body)}
+.vcard span{font-size:var(--fs-sm);color:var(--mute)}
+
+/* settings: sliders, custom colors, tools and shortcuts */
+.set .lbl .rv{font-weight:500;font-size:var(--fs-sm);color:var(--ink);white-space:nowrap}
+.rng{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;--p:50%}
+.rng::-webkit-slider-runnable-track{height:6px;border-radius:var(--r-s);background:linear-gradient(90deg,var(--accent) 0 var(--p),var(--raise3) var(--p) 100%)}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-6px;border-radius:50%;background:var(--ink);border:3px solid var(--accent);
+  box-shadow:0 0 0 4px var(--acc-soft),0 4px 12px -4px rgba(0,0,0,.7);transition:transform calc(160ms*var(--f)) var(--e-snap)}
+.rng:hover::-webkit-slider-thumb{transform:scale(1.15)}
+.rng:active::-webkit-slider-thumb{transform:scale(.92)}
+.cpick{display:flex;gap:var(--sp-sm)}
+.cpick input{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:none;padding:0;cursor:pointer;overflow:hidden;
+  transition:transform calc(200ms*var(--f)) var(--e-snap)}
+.cpick input:hover{transform:scale(1.08)}
+.cpick input::-webkit-color-swatch-wrapper{padding:0}
+.cpick input::-webkit-color-swatch{border:0;border-radius:50%}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-sm)}
+.tool{display:flex;align-items:center;gap:var(--sp-md);text-align:left;padding:9px 11px;border-radius:var(--r-m);background:var(--raise);border:1px solid var(--line);font-size:var(--fs-sm);
+  transition:background-color calc(150ms*var(--f)),transform calc(200ms*var(--f)) var(--e-snap),border-color calc(150ms*var(--f))}
+.tool:hover{background:var(--raise2);border-color:var(--line2)}
+.tool .ti{transition:transform calc(220ms*var(--f)) var(--e-snap)}
+.tool:hover .ti{transform:translateY(-1px)}
+.tool:active{transform:scale(.97)}
+.tool .ti{width:30px;height:30px;flex:none;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2);color:var(--accent2)}
+.tool .ti svg{width:var(--ic-m);height:var(--ic-m)}
+.keys{display:flex;flex-direction:column;gap:6px}
+.keys div{display:flex;align-items:center;gap:var(--sp-md);padding:9px 12px;border-radius:var(--r-m);background:var(--raise)}
+.keys kbd{font:500 var(--fs-sm) var(--text);padding:3px 9px;border-radius:var(--r-s);border:1px solid var(--line2);background:var(--raise2);min-width:120px;text-align:center}
+.keys span{font-size:var(--fs-sm);color:var(--mute)}
+html[data-corners=soft]{--r-l:28px;--r-m:18px;--r-s:12px;--r-xs:7px}
+html[data-corners=sharp]{--r-l:8px;--r-m:6px;--r-s:4px;--r-xs:2px}
+/* "Solid panels" (--pa, default 1.75): how much deep glass sits between the stars and the content */
+.pan{background:var(--sheen),color-mix(in oklab,var(--deep) clamp(0%,calc((var(--pa,1) - 1) * 104%),94%),var(--raise))}
+.atmo{opacity:min(1,var(--neb,1))}
+/* a filter on a full-window layer costs a shader pass over the whole window: only when the nebula is pushed past 1 */
+html[data-neb=hi] .atmo{filter:brightness(max(1,var(--neb,1))) saturate(max(1,var(--neb,1)))}
+html[data-quick=off] .h-quick{display:none}
+
+/* --tb / --tw: set by shell.js (placeToasts) so the stack sits beside the dock or above it, never over it */
+.toasts{position:fixed;right:16px;bottom:var(--tb,20px);z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-sm);pointer-events:none;width:var(--tw,min(420px,calc(100vw - 32px)));max-width:var(--tw,min(420px,calc(100vw - 32px)))}
+.toast{max-width:100%}
+/* a narrow lane: the text wraps (two or three lines) instead of leaving the lane */
+.toast>span{min-width:0;overflow-wrap:anywhere;display:flex;flex-direction:column;gap:2px}
+/* at most three lines (the whole text is the tooltip); a technical second line (a path, an error code) at most one */
+.toast .tm,.toast .tt{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.toast .tm{-webkit-line-clamp:3}
+.toast .tt{-webkit-line-clamp:1;font-size:var(--fs-cap);font-weight:400;color:var(--mute)}
+/* the lane above the dock (shell.js placeToasts, only when there is no room beside it): one slim bar, centred on the dock */
+.toasts[data-at=above]{right:auto;left:var(--tl,50%);transform:translateX(-50%);align-items:center}
+.toasts[data-at=above] .toast{min-height:38px;padding-top:4px;padding-bottom:4px}
+/* while toasts use the strip above the dock, the page keeps it free (it never covers a panel) */
+html[data-toasts=above]{--dockspace:154px}
+html[data-toasts=above].pad-hints{--dockspace:182px}
+.swatch.custom{background:conic-gradient(from 200deg,var(--s),var(--s2),var(--s));display:grid;place-items:center}
+.swatch.custom span{width:18px;height:18px;border-radius:50%;background:rgba(6,10,20,.55);display:grid;place-items:center;color:#fff}
+.swatch.custom svg{width:var(--ic-xs);height:var(--ic-xs);stroke-width:var(--ic-w-bold)}
+.cpick-row{display:flex;align-items:center;gap:var(--sp-sm);margin-top:12px;font-size:var(--fs-sm);color:var(--mute)}
+.cpick-row input{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:none;padding:0;cursor:pointer;overflow:hidden}
+.cpick-row input::-webkit-color-swatch-wrapper{padding:0}
+.cpick-row input::-webkit-color-swatch{border:0;border-radius:50%}
+.cpick-row span+input{margin-right:8px}
+.about-h{display:flex;align-items:center;gap:var(--sp-md);margin-bottom:14px}
+.about-h svg{width:48px;height:48px}
+.about-h h3{font:500 var(--fs-h2) var(--display);margin:0}
+.about-h p{color:var(--mute);font-size:var(--fs-sm);margin:2px 0 0}
+#langs.langs{display:block}
+.langs .lbar{display:flex;gap:2px;height:9px;border-radius:var(--r-s);overflow:hidden}
+.langs .lbar span{display:block;transform-origin:0 50%}
+.langs .llist{display:flex;flex-wrap:wrap;gap:6px var(--sp-lg);margin-top:12px;font-size:var(--fs-sm);color:var(--mute)}
+.langs .llist span{display:flex;align-items:center;gap:6px}
+.langs .llist i{width:9px;height:9px;border-radius:50%}
+.langs .llist b{color:var(--ink);font-weight:500}
+
+/* compact density: less breathing room in all common pieces */
+html[data-density=compact] body{font-size:var(--fs-body)}
+html[data-density=compact] .pan{padding:11px 13px}
+html[data-density=compact] .pan>h4,html[data-density=compact] .pan-h{margin-bottom:6px}
+html[data-density=compact] .row{padding:6px 10px;gap:var(--sp-sm)}
+html[data-density=compact] .row .ri{width:28px;height:28px}
+html[data-density=compact] .btn{height:30px;padding:0 12px}
+html[data-density=compact] .seg button{height:28px}
+html[data-density=compact] .subnav{margin-bottom:10px}
+html[data-density=compact] .subnav button{height:30px;padding:0 12px}
+html[data-density=compact] .subnav .ind{height:30px}
+html[data-density=compact] .mhead{margin-bottom:10px}
+html[data-density=compact] .mhead h1{font-size:var(--fs-n1)}
+html[data-density=compact] .mhead p{margin-top:4px}
+html[data-density=compact] .home-grid{row-gap:var(--sp-md);column-gap:var(--sp-md)}
+html[data-density=compact] .vit{padding:5px 10px;row-gap:5px}
+html[data-density=compact] .pend,html[data-density=compact] .nx{padding:6px 10px}
+html[data-density=compact] .h-id .model{font-size:var(--fs-h1)}
+html[data-density=compact] .set{padding:10px 0}
+html[data-density=compact] .dk{border-radius:var(--r-m)}
+html[data-corners=sharp] .dk{--dkr:3px}
+html[data-corners=soft] .dk{--dkr:18px}
+html[data-density=compact] .tab{padding-bottom:8px}
+
+/* corners: square or very round on all common pieces and in the modules */
+html[data-corners=sharp] :is(.pan,.btn,.seg,.seg button,.seg .ind,.subnav,.subnav button,.subnav .ind,.row,.row .ri,.field,.dock,.dk,.search,.mode,.sheet,.pal,.pal .it,.pal .hl,.cs,.cs-stats div,.cs-list>div,.tool,.vcard,.note,.toast,.sk,.sk-row,.vit,.vit .vi,.pend,.nx,.nx .ni,.iconbtn,.wc,.chip,.tilt,.bt,.m3-row,.m3-list,.cs-ic,.kbd,.keys div,.keys kbd,.tbl-head,[class*="card"],[class*="tile"]){border-radius:3px!important}
+html[data-corners=soft] :is(.pan,.sheet,.pal,.cs,.dock,.tilt,.bt,.m3-list,[class*="card"],[class*="tile"]){border-radius:30px!important}
+html[data-corners=soft] :is(.btn,.seg,.subnav,.field,.search,.mode,.chip,.toast,.note){border-radius:999px!important}
+html[data-corners=soft] :is(.seg button,.seg .ind,.subnav button,.subnav .ind){border-radius:999px!important}
+html[data-corners=soft] :is(.row,.vit,.pend,.nx,.tool,.dk,.pal .it,.pal .hl,.cs-stats div,.cs-list>div,.m3-row){border-radius:18px!important}
+/* toasts: the same dark glass as everything else, a small planet as the signifier */
+.toast{pointer-events:auto;display:flex;align-items:center;gap:var(--sp-md);min-height:44px;padding:8px 10px 8px 14px;border-radius:var(--r-m);
+  background:var(--sheen),color-mix(in oklab,var(--deep) 94%,var(--accent2));border:1px solid var(--line2);color:var(--ink);font-weight:500;font-size:var(--fs-body);
+  box-shadow:var(--rim),0 22px 48px -20px rgba(0,0,0,.9),0 4px 12px -6px rgba(0,0,0,.5)}
+.toast::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--deep),0 0 0 3px color-mix(in oklab,var(--accent2) 65%,transparent)}
+.toast>span{padding:4px 0}
+.toast .btn{flex:none;height:28px;background:var(--acc-soft);color:var(--accent);border:1px solid var(--acc-line)}
+.toast .btn:hover{background:color-mix(in oklab,var(--accent) 20%,transparent)}
+
+
+/* ---------- small windows (the minimum is 1100 x 700): nothing wraps, nothing overlaps ---------- */
+@media (max-width:1280px){
+  .top{gap:var(--sp-sm);padding:0 16px}
+  .search{width:min(480px,30vw)}
+  .search .kbd{display:none}
+  .mode #modeTxt{max-width:104px}
+  .mode{padding:0 11px;gap:var(--sp-sm)}
+}
+@media (max-width:1160px){
+  .search{width:min(480px,27vw)}
+  .mode #modeTxt{max-width:92px}
+}
+@media (max-height:760px){
+  .sheet nav h2{padding-bottom:10px}
+  .sheet nav button{height:34px}
+  .sheet nav .ind{height:34px}
+}
+
+/* ---------- compact layout: a window smaller than the layouts are designed for (1100 x 700 CSS px) ----------
+   html[data-layout=scroll] (shell.js; the rule is SH.zoomRule.compact in js/zoom.js). Nothing is squeezed or clipped:
+   every view lays out at least as tall as it would in a 760 px window (--fit-h, a little more than the 700 px minimum,
+   so nothing is cramped) and the view itself scrolls as one page, with the mouse wheel, touch (default panning,
+   nothing blocks it), the keyboard and the controller. Lists keep
+   scrolling inside their panels and hand the wheel on to the page at their ends (no overscroll containment). The dock
+   floats over the page; the page ends with the dock's room free (::after), so its last content always scrolls clear
+   of the dock. Narrow windows reflow their columns in each module's CSS (max-width:1099px); a fit-to-height tab that
+   still needs more room makes its module taller (--grow, shell.js growCompact). */
+html[data-layout=scroll]{--fit-h:calc(760px - var(--top))}
+html[data-layout=scroll] .view{overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:none;scrollbar-gutter:stable}
+html[data-layout=scroll] .view::after{content:"";display:block;height:var(--dockspace)}
+html[data-layout=scroll] .view>.mod{position:relative;inset:auto;margin:6px 30px 0;height:max(calc(100% - 6px - var(--dockspace)),calc(var(--fit-h) - 6px - var(--dockspace) + var(--grow,0px)))}
+html[data-layout=scroll] .view .tab{overscroll-behavior:auto}
+/* a module's own dialogs cover what is on screen, wherever the page is scrolled */
+html[data-layout=scroll] :is(#v-monitor .mdlg,#v-drivers .dq-o,#v-hangar .hg-dlg,#v-updater .u-confirm){position:fixed;inset:var(--top) 0 0 0}
+@media (max-width:1099px){
+  html[data-layout=scroll] .view>.mod{margin:6px 18px 0}
+  html[data-layout=scroll] .mhead{flex-wrap:wrap;row-gap:10px}
+  html[data-layout=scroll] .mhead h1{white-space:normal}
+}
+
+/* ---------- lighter effects on battery (html[data-lite="1"], set by js/telemetry.js) ----------
+   The same look with the costly parts swapped: no backdrop blur (a more opaque fill instead), no mask on scrolling
+   lists, short shadows, no endless skeleton sweep. */
+html[data-lite="1"] .cs-scrim,html[data-lite="1"] .su-ov,html[data-lite="1"] #v-hangar .hg-dlg,html[data-lite="1"] #v-updater .u-confirm,
+html[data-lite="1"] #v-tester .kb-cover{-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-lite="1"] .cs-scrim{background:rgba(3,5,11,.74)}
+html[data-lite="1"] .su-ov{background:color-mix(in oklab,var(--void) 80%,transparent)}
+html[data-lite="1"] #v-hangar .hg-dlg,html[data-lite="1"] #v-updater .u-confirm{background:rgba(3,6,14,.72)}
+html[data-lite="1"] #v-tester .kb-cover{background:color-mix(in oklab,var(--deep) 94%,transparent)}
+html[data-lite="1"] .sf{-webkit-mask-image:none;mask-image:none}
+html[data-lite="1"] .sk::after{animation:none}
+html[data-lite="1"] .pan{box-shadow:0 8px 18px -12px rgba(0,0,0,.7)}
+html[data-lite="1"] .pan .pan{box-shadow:none}
+html[data-lite="1"] .subnav,html[data-lite="1"] .search,html[data-lite="1"] .mode,html[data-lite="1"] .btn.pri,html[data-lite="1"] .btn.sec{box-shadow:0 4px 10px -6px rgba(0,0,0,.6)}
+html[data-lite="1"] .dock::before{box-shadow:0 8px 20px -10px rgba(0,0,0,.7)}
+html[data-lite="1"] .sheet,html[data-lite="1"] .pal{box-shadow:0 16px 40px -18px rgba(0,0,0,.85)}
+
+/* the version text is hidden */
+.ver-tag{pointer-events:none;display:none !important}
+.ver-t{display:none !important}
+/* report a bug: a small icon to the left of the version; only it takes the pointer (the version text never does) */
+.bug-btn{pointer-events:auto;display:grid;place-items:center;width:22px;height:22px;margin:-4px -2px -4px -4px;border-radius:var(--r-xs);color:var(--faint);opacity:.75;
+  transition:color calc(167ms*var(--f)),opacity calc(167ms*var(--f)),background-color calc(167ms*var(--f))}
+.bug-btn svg.i{width:var(--ic-s);height:var(--ic-s);filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.bug-btn:hover,.bug-btn[aria-expanded=true]{color:var(--ink);opacity:1;background:var(--raise2)}
+.bug-btn:focus-visible{color:var(--ink);opacity:1;outline-offset:1px;border-radius:var(--r-xs)}
+.bug-pop{position:fixed;left:14px;bottom:44px;z-index:75;width:min(320px,calc(100vw - 28px));padding:16px 18px 14px;
+  box-shadow:var(--rim),var(--lift-hi);backdrop-filter:blur(18px) saturate(1.2);transform-origin:12px 100%}
+.bug-pop h3{font:600 var(--fs-lg)/1.25 var(--display);color:var(--ink);margin-bottom:6px}
+.bug-pop p{color:var(--mute);font-size:var(--fs-sm);line-height:1.45;margin-bottom:var(--sp-md)}
+.bug-acts{display:flex;justify-content:flex-end;gap:var(--sp-sm);flex-wrap:wrap}
+html[data-lite="1"] .bug-pop{backdrop-filter:none;background:var(--deep)}
+/* the administrator prompt (js/admin-resume.js): in the middle of the window, above everything (the settings sheet too) */
+.ar-o{position:fixed;inset:0;z-index:92;display:grid;place-items:center;padding:24px}
+.ar-o .ar-s{position:absolute;inset:0;background:color-mix(in oklab,var(--void) 62%,transparent);backdrop-filter:blur(6px)}
+.ar{position:relative;width:min(470px,100%);padding:26px 26px 20px;border-radius:var(--r-l);
+  background:radial-gradient(400px 190px at 100% 0%,color-mix(in oklab,var(--accent2) 11%,transparent),transparent 70%),
+             radial-gradient(340px 170px at 0% 100%,color-mix(in oklab,var(--accent) 8%,transparent),transparent 70%),var(--deep);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.6),0 0 0 1px var(--line2)}
+.ar-ic{width:48px;height:48px;border-radius:var(--r-m);display:grid;place-items:center;margin-bottom:16px;color:var(--accent2);background:color-mix(in oklab,var(--accent2) 14%,transparent)}
+.ar-ic svg{width:var(--ic-2xl);height:var(--ic-2xl)}
+.ar h3{font:500 var(--fs-h2)/1.2 var(--display);letter-spacing:-.02em;color:var(--ink);margin-bottom:10px}
+.ar p{color:var(--mute);font-size:var(--fs-body);line-height:1.5;margin-bottom:8px}
+.ar p b{color:var(--ink);font-weight:500}
+.ar-always{display:flex;align-items:center;gap:10px;margin-top:14px;padding:6px 8px 6px 0;border-radius:var(--r-s);color:var(--ink);font-size:var(--fs-body);text-align:left}
+.ar-always:hover .check{border-color:color-mix(in oklab,var(--ink) 40%,transparent)}
+.ar p.ar-note{font-size:var(--fs-sm);color:var(--faint);margin:2px 0 0 28px}
+.ar-a{display:flex;justify-content:flex-end;gap:var(--sp-sm);margin-top:18px;flex-wrap:wrap}
+html[data-lite="1"] .ar-o .ar-s{backdrop-filter:none}
+
+/* rolling numbers (SH.rollNumber): every character in its own column; the old one leaves up, the new one arrives from below */
+rn-c{display:inline-block;position:relative;overflow:clip;clip-path:inset(0);white-space:pre;vertical-align:baseline;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+rn-c[data-d]{width:1ch;text-align:center}
+rn-n{display:inline-block}
+rn-g{position:absolute;left:0;right:0;top:0;text-align:inherit;pointer-events:none}

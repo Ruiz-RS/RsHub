@@ -1,0 +1,22 @@
+{
+  "Processor": "プロセッサ",
+  "Graphics": "グラフィックス",
+  "Memory": "メモリ",
+  "Video memory": "ビデオ メモリ",
+  "Drive C:": "ドライブ C:",
+  "CPU fan": "CPU ファン",
+  "GPU fan": "GPU ファン",
+  "GPU power": "GPU 電力",
+  "Download": "ダウンロード",
+  "Upload": "アップロード",
+  "Battery": "バッテリー",
+  "Last 2 minutes": "過去 2 分間",
+  "Components": "コンポーネント",
+  "Laptop": "ノート PC",
+  "3D model": "3D モデル",
+  "Your PC in 3D: drag to rotate it and hover a component to see where it is.": "PC を 3D で表示します。ドラッグして回転し、コンポーネントにポインターを合わせると位置を確認できます。",
+  "Drag to rotate it. Scroll to zoom in.": "ドラッグして回転、スクロールしてズームできます。",
+  "Rotate, press to reset": "回転 (押し込みでリセット)",
+  "Zoom": "ズーム",
+  "Right stick to rotate it, LB and RB to zoom, press the stick to reset.": "右スティックで回転、LB と RB でズーム、スティックを押し込むと表示をリセットします。"
+}

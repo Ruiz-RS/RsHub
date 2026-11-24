@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RsHub · designs</title>
+<style>
+  :root { --bg:#f3f4f6; --ink:#1d2229; --soft:#5d6673; --line:#d9dde3; --card:#ffffff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161a20; --ink:#e8ebef; --soft:#9aa3ae; --line:#2a3039; --card:#1d222a; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:56px 20px; }
+  h1 { font:600 28px/1.2 "Segoe UI Variable Display","Segoe UI",system-ui,sans-serif; margin:0 0 6px; }
+  p.lead { color:var(--soft); margin:0 0 32px; }
+  ol { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+  a { display:grid; grid-template-columns:28px 1fr; gap:4px 14px; padding:16px 18px; background:var(--card);
+      border:1px solid var(--line); border-radius:10px; color:inherit; text-decoration:none;
+      transition: transform .17s cubic-bezier(.2,.8,.2,1), border-color .17s; }
+  a:hover { transform: translateX(4px); border-color: var(--soft); }
+  a:active { transform: translateX(4px) scale(.99); }
+  .n { grid-row: span 2; font-weight:600; color:var(--soft); font-variant-numeric: tabular-nums; }
+  .t { font-weight:600; }
+  .d { color:var(--soft); font-size:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Five directions for RsHub</h1>
+  <p class="lead">These are mockups: you can navigate, open search with Ctrl+K and open settings, but nothing touches your PC.</p>
+  <ol>
+    <li><a href="1-observatory.html"><span class="n">1</span><span class="t">Observatory</span><span class="d">Star chart: ink blue, warm starlight, the components form a constellation.</span></a></li>
+    <li><a href="2-aluminum.html"><span class="n">2</span><span class="t">Aluminum</span><span class="d">Light industrial hardware: buttons that sink, needle dials, LEDs.</span></a></li>
+    <li><a href="3-hud.html"><span class="n">3</span><span class="t">HUD</span><span class="d">A restrained gaming cockpit: a PC scan, beveled panels, odometer numbers.</span></a></li>
+    <li><a href="4-native.html"><span class="n">4</span><span class="t">Native Windows 11</span><span class="d">Like a Microsoft app on its best day: Mica, Fluent, elements that fly between views.</span></a></li>
+    <li><a href="5-orbital.html"><span class="n">5</span><span class="t">Orbital</span><span class="d">The showpiece: the components orbit the laptop in 3D and the camera travels to each module.</span></a></li>
+  </ol>
+</main>
+</body>
+</html>

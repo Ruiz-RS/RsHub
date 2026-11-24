@@ -1,0 +1,26 @@
+/* Home view: 3D model */
+.hv-model3d{position:absolute;inset:0}
+.hv-model3d .m3-stage{position:absolute;inset:0;cursor:grab}
+.hv-model3d.grabbing .m3-stage{cursor:grabbing}
+.hv-model3d .m3-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hv-model3d .m3-stage.flat{display:grid;place-items:center;cursor:default;padding-left:250px}
+.hv-model3d .m3-fallback{width:min(100%,460px);height:auto;overflow:visible}
+
+.hv-model3d .m3-list{position:absolute;left:0;top:0;bottom:0;width:232px;padding:8px 6px;z-index:3;overflow:auto;
+  display:flex;flex-direction:column;justify-content:space-around;background:color-mix(in oklab,var(--deep) 70%,transparent)}
+.hv-model3d .m3-list>h4{display:none}
+.hv-model3d .m3-row{display:flex;align-items:center;gap:10px;width:100%;padding:6px 8px;border-radius:10px;text-align:left;color:var(--mute);
+  transition:background-color calc(150ms*var(--f)),color calc(150ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+.hv-model3d .m3-row:hover,.hv-model3d .m3-row.on{background:var(--raise2);color:var(--ink);transform:translateX(3px)}
+.hv-model3d .m3-row:active{transform:translateX(3px) scale(.98)}
+.hv-model3d .m3-row .ci{width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:var(--raise2);color:var(--mute);
+  transition:color calc(150ms*var(--f)),background-color calc(150ms*var(--f))}
+.hv-model3d .m3-row.on .ci{color:var(--accent);background:color-mix(in oklab,var(--accent) 14%,transparent)}
+.hv-model3d .m3-row .ci svg{width:15px;height:15px}
+.hv-model3d .m3-row .ct{flex:1;min-width:0}
+.hv-model3d .m3-row .ct b{display:block;font-weight:500;font-size:12.5px;color:var(--ink)}
+.hv-model3d .m3-row .ct span{display:block;font-size:11.5px;line-height:1.3;text-wrap:balance}
+.hv-model3d .m3-hint{position:absolute;left:calc(50% + 124px);bottom:6px;transform:translateX(-50%);font-size:12px;color:var(--faint);white-space:nowrap;pointer-events:none}
+/* blurred canvas edges: the model is never cut off abruptly */
+.hv-model3d .m3-canvas{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 48px,#000 calc(100% - 48px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 36px,#000 calc(100% - 36px),transparent 100%);
+  -webkit-mask-composite:source-in;mask-composite:intersect}

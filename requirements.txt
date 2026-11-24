@@ -1,0 +1,4 @@
+pywebview>=6.2
+psutil>=7.0
+pystray>=0.19
+pillow>=11.0

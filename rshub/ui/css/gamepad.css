@@ -1,0 +1,59 @@
+/* RsHub · controller navigation: the focus ring and the hint bar. Both exist only while a controller is in use
+   (html.pad-mode); a mouse move, a touch or a key press brings the normal interface back. */
+
+/* the ring: one element that glides to whatever has the focus */
+#padRing{position:fixed;left:0;top:0;width:40px;height:40px;z-index:300;pointer-events:none;opacity:0;--rr:12px;will-change:transform,width,height;
+  transition:opacity calc(160ms*var(--f))}
+html.pad-mode #padRing.on.has:not(.gone){opacity:1}
+#padRing .pr-in{position:absolute;inset:0;border-radius:var(--rr)}
+/* the gradient frame: a masked rounded border (.pr-fr) that clips a square gradient (.pr-fr b) turning behind it.
+   Only the square's transform animates (compositor only, no restyle or repaint per frame); it turns only while the ring is shown. */
+#padRing .pr-fr{position:absolute;inset:-5px;border-radius:calc(var(--rr) + 5px);padding:2.5px;overflow:hidden;container-type:size;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#padRing .pr-fr b{position:absolute;left:50%;top:50%;width:calc(100cqw + 100cqh);height:calc(100cqw + 100cqh);margin:0;will-change:transform;transform:translate(-50%,-50%);
+  background:conic-gradient(var(--accent2),color-mix(in oklab,var(--accent2) 25%,transparent) 28%,var(--accent) 52%,color-mix(in oklab,var(--accent2) 25%,transparent) 78%,var(--accent2));
+  animation:padSpin calc(5s*var(--f) + 2s) linear infinite;animation-play-state:paused}
+html.pad-mode #padRing.on.has .pr-fr b{animation-play-state:running}
+#padRing .pr-in::after{content:"";position:absolute;inset:-5px;border-radius:calc(var(--rr) + 5px);
+  background:color-mix(in oklab,var(--accent2) 7%,transparent);
+  box-shadow:0 0 0 1px color-mix(in oklab,var(--accent2) 45%,transparent),0 0 0 3px color-mix(in oklab,var(--void) 70%,transparent),0 12px 28px -12px rgba(0,0,0,.8)}
+#padRing i{position:absolute;inset:-5px;border-radius:calc(var(--rr) + 5px);border:2px solid var(--accent);opacity:0}
+@keyframes padSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+html[data-int=min] #padRing .pr-fr b{animation:none}
+@media (prefers-reduced-motion:reduce){#padRing .pr-fr b{animation:none}}
+
+/* in controller mode the ring replaces the browser's own focus outline */
+html.pad-mode :focus-visible,html.pad-mode :focus{outline:none}
+/* buttons that a row shows on hover show while the controller is on them too */
+html.pad-mode .view :is(button,[role=button]):focus,html.pad-mode .view :is(button,[role=button]):focus svg{opacity:1!important}
+
+/* the hint bar sits just above the dock; while it is up the page keeps that strip free (html.pad-hints) */
+html.pad-hints{--dockspace:138px}
+#padHints{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:120;display:none;align-items:center;gap:16px;
+  max-width:calc(100vw - 32px);padding:4px 18px;border-radius:var(--r-pill);pointer-events:none;white-space:nowrap;
+  background:color-mix(in oklab,var(--deep) 86%,transparent);border:1px solid var(--line2);backdrop-filter:blur(12px);
+  box-shadow:0 14px 40px -16px rgba(0,0,0,.7)}
+html.pad-mode #padHints.on{display:flex}
+#padHints .ph{display:flex;align-items:center;gap:5px;font-size:var(--fs-sm);color:var(--mute)}
+#padHints .ph b{font-weight:500}
+#padHints .ph .pg+.pg{margin-left:-1px}
+.pg{flex:none;overflow:visible}
+.pg circle,.pg rect{fill:color-mix(in oklab,var(--ink) 9%,transparent);stroke:color-mix(in oklab,var(--ink) 38%,transparent);stroke-width:1.3}
+.pg circle.face{fill:color-mix(in oklab,var(--c) 20%,transparent);stroke:var(--c)}
+.pg circle.dot{fill:color-mix(in oklab,var(--ink) 45%,transparent);stroke:none}
+.pg path.ln,.pg rect.ln{fill:none;stroke:color-mix(in oklab,var(--ink) 70%,transparent);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.pg text{fill:var(--ink);font:600 10px var(--text);stroke:none}
+@media (max-width:900px){#padHints{gap:10px;padding:6px 12px}#padHints .ph b{display:none}}
+#padHints.in-sheet{left:24px;bottom:98px;transform:none;z-index:120}
+@media (max-width:1240px){#padHints.in-sheet{left:auto;right:30px;bottom:18px;padding:6px 14px;gap:12px}}
+
+/* inside a panel that scrolls (A entered it, B leaves): a calm, steady frame around the panel; the ring stays on the item */
+#padPanel{position:fixed;left:0;top:0;z-index:299;pointer-events:none;opacity:0;border-radius:var(--rr,14px);--rr:14px;
+  box-shadow:0 0 0 2px color-mix(in oklab,var(--accent2) 55%,transparent),0 0 0 6px color-mix(in oklab,var(--accent2) 12%,transparent);
+  transition:opacity calc(160ms*var(--f))}
+html.pad-mode #padPanel.on{opacity:1}
+/* the name of an icon-only target (its tooltip), under the ring */
+#padTip{position:fixed;left:0;top:0;z-index:301;pointer-events:none;opacity:0;padding:5px 10px;border-radius:var(--r-s);white-space:nowrap;
+  font-size:var(--fs-sm);color:var(--ink);background:color-mix(in oklab,var(--deep) 94%,transparent);border:1px solid var(--line2);
+  box-shadow:0 10px 24px -12px rgba(0,0,0,.8);transition:opacity calc(140ms*var(--f))}
+html.pad-mode #padTip.on:not(.gone){opacity:1}

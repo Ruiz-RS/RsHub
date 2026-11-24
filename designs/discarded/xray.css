@@ -1,0 +1,76 @@
+/* RsHub · "X-ray" Home view */
+.hv-xray{position:absolute;inset:0 0 2px 0}
+.hv-xray .xr-plan{position:absolute;inset:0 0 40px 0}
+.hv-xray .xr-svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* blueprint strokes */
+.hv-xray .ln{fill:none;stroke:var(--accent2);stroke-opacity:.42;stroke-width:1.3;stroke-dasharray:1;stroke-linejoin:round;stroke-linecap:round;
+  transition:stroke calc(220ms*var(--f)),stroke-opacity calc(220ms*var(--f)),stroke-width calc(220ms*var(--f))}
+.hv-xray .ln.shell{stroke-opacity:.6;stroke-width:1.6}
+.hv-xray .ln.inner{stroke-opacity:.16}
+.hv-xray .ln.board{fill:var(--accent2);fill-opacity:.035;stroke-opacity:.3}
+.hv-xray .ln.cable{stroke-opacity:.3;stroke-width:1.1}
+.hv-xray .ln.housing{fill:var(--accent2);fill-opacity:.025}
+.hv-xray .grid{opacity:.9}
+.hv-xray .ghost rect{fill:none;stroke:var(--accent2);stroke-opacity:.09;stroke-dasharray:3 5}
+.hv-xray .chipr{fill:var(--raise3);stroke:var(--accent2);stroke-opacity:.25;stroke-width:.8;transition:fill calc(220ms*var(--f)),stroke calc(220ms*var(--f))}
+.hv-xray .die{fill:var(--accent2);fill-opacity:.12;stroke:var(--accent2);stroke-opacity:.55;stroke-width:1;transition:fill calc(220ms*var(--f)),fill-opacity calc(220ms*var(--f)),stroke calc(220ms*var(--f))}
+.hv-xray .vram{fill:var(--raise3);stroke:var(--accent2);stroke-opacity:.35;stroke-width:.8;transition:fill calc(220ms*var(--f)),stroke calc(220ms*var(--f))}
+.hv-xray .trace{fill:none;stroke:var(--accent2);stroke-opacity:.14;stroke-width:1}
+.hv-xray .fin{stroke:var(--accent2);stroke-opacity:.22;stroke-width:1}
+.hv-xray .blades path{fill:var(--accent2);fill-opacity:.1;stroke:var(--accent2);stroke-opacity:.5;stroke-width:1}
+.hv-xray .hub{fill:var(--deep);stroke:var(--accent2);stroke-opacity:.6;stroke-width:1.2}
+.hv-xray .hubdot{fill:var(--accent2)}
+.hv-xray .rotor{will-change:transform}
+.hv-xray .slot-empty{fill:none;stroke:var(--accent2);stroke-opacity:.3;stroke-dasharray:4 4}
+.hv-xray .tiny{font:400 9.5px var(--text);fill:var(--faint)}
+.hv-xray .cell{fill:var(--accent2);fill-opacity:.05;stroke:var(--accent2);stroke-opacity:.25;transition:fill calc(220ms*var(--f)),fill-opacity calc(220ms*var(--f)),stroke calc(220ms*var(--f))}
+.hv-xray .dot{fill:var(--accent2);fill-opacity:.32;transition:fill calc(220ms*var(--f))}
+.hv-xray .screw{fill:none;stroke:var(--accent2);stroke-opacity:.4}
+.hv-xray .ports rect{fill:var(--raise3);stroke:var(--accent2);stroke-opacity:.3;stroke-width:.8}
+
+/* heat pipes: base, cool, warm (opacity by temperature) and flow */
+.hv-xray .pipe-base,.hv-xray .pipe-cold,.hv-xray .pipe-warm,.hv-xray .pipe-flow{fill:none;stroke-linecap:round}
+.hv-xray .pipe-base{stroke:var(--void);stroke-width:10}
+.hv-xray .pipe-cold{stroke:var(--accent2);stroke-opacity:.5;stroke-width:6}
+.hv-xray .pipe-warm{stroke:var(--accent);stroke-width:6;opacity:.12;filter:drop-shadow(0 0 5px var(--accent))}
+.hv-xray .pipe-flow{stroke:#fff;stroke-opacity:.5;stroke-width:1.8;stroke-dasharray:.035 .09}
+html[data-int=min] .hv-xray .pipe-flow{stroke-dasharray:none;stroke-opacity:.12}
+
+/* point at a part */
+.hv-xray .hit{fill:transparent;pointer-events:all}
+.hv-xray .part{cursor:pointer;transition:opacity calc(240ms*var(--f)),filter calc(240ms*var(--f))}
+.hv-xray .fan,.hv-xray .pipes,.hv-xray .finstack,.hv-xray .ports,.hv-xray .ghost{transition:opacity calc(240ms*var(--f))}
+.hv-xray .xr-svg.has-hot .part:not(.hot){opacity:.34}
+.hv-xray .xr-svg.has-hot .fan,.hv-xray .xr-svg.has-hot .finstack,.hv-xray .xr-svg.has-hot .ports{opacity:.4}
+.hv-xray .xr-svg.has-hot .pipes{opacity:.55}
+.hv-xray .part.hot{filter:drop-shadow(0 0 12px color-mix(in oklab,var(--accent) 50%,transparent))}
+.hv-xray .part.hot .ln{stroke:var(--accent);stroke-opacity:1;stroke-width:2}
+.hv-xray .part.hot .chipr,.hv-xray .part.hot .vram{fill:color-mix(in oklab,var(--accent) 25%,transparent);stroke:var(--accent);stroke-opacity:.9}
+.hv-xray .part.hot .die,.hv-xray .part.hot .cell{fill:var(--accent);fill-opacity:.2;stroke:var(--accent)}
+.hv-xray .part.hot .dot{fill:var(--accent)}
+.hv-xray .part[data-part=sys].hot .ln.board{fill:var(--accent);fill-opacity:.06}
+
+/* ficha */
+.hv-xray .xr-lead{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;opacity:0}
+.hv-xray .lead{fill:none;stroke:var(--accent);stroke-width:1.2;stroke-dasharray:1}
+.hv-xray .lead-dot{fill:var(--accent)}
+.hv-xray .xr-card{position:absolute;left:0;top:0;width:248px;padding:14px 16px 12px;border-radius:var(--r-m);z-index:5;opacity:0;pointer-events:none;cursor:pointer;
+  background:color-mix(in oklab,var(--deep) 94%,transparent);border:1px solid var(--line2);box-shadow:0 24px 60px -24px rgba(0,0,0,.85);will-change:transform,opacity}
+.hv-xray .xr-card.on{pointer-events:auto}
+.hv-xray .xr-card .k{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--mute)}
+.hv-xray .xr-card .k svg{width:14px;height:14px;color:var(--accent)}
+.hv-xray .xr-card h3{font:500 14.5px/1.3 var(--display);letter-spacing:-.01em;margin:6px 0 10px}
+.hv-xray .xr-card dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12px}
+.hv-xray .xr-card dt{color:var(--mute)}
+.hv-xray .xr-card dd{text-align:right}
+.hv-xray .xr-card .bar{margin-top:10px;height:5px}
+.hv-xray .xr-card .go{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);font-size:11.5px;color:var(--accent2)}
+
+/* fan and temperature readout */
+.hv-xray .xr-ro{position:absolute;left:0;right:0;bottom:4px;height:30px;display:flex;justify-content:center;align-items:center;gap:22px;font-size:12px;color:var(--mute);white-space:nowrap}
+.hv-xray .xr-ro>div{display:flex;align-items:center;gap:7px}
+.hv-xray .xr-ro b{color:var(--ink);font-weight:500}
+.hv-xray .xr-ro .sw{width:7px;height:7px;border-radius:50%;background:var(--accent2)}
+.hv-xray .xr-ro .sw.t{background:var(--accent)}
+@media (max-width:1300px){.hv-xray .xr-ro{gap:14px;font-size:11.5px}.hv-xray .xr-ro>div:nth-child(n+3){display:none}}

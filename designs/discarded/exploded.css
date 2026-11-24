@@ -1,0 +1,55 @@
+/* Home view: exploded */
+.hv-exploded{position:absolute;inset:0}
+.hv-exploded .ex-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.hv-exploded .ly{cursor:pointer}
+.hv-exploded .ly .side{transition:filter calc(200ms*var(--f))}
+.hv-exploded .ly .edge{fill:none;stroke:rgba(190,215,255,.16);stroke-width:1}
+.hv-exploded .ly .top{stroke:rgba(190,215,255,.14);stroke-width:1;transition:stroke calc(220ms*var(--f))}
+.hv-exploded .ly.on .top{stroke:color-mix(in oklab,var(--accent2) 70%,transparent)}
+.hv-exploded .ly.on .edge{stroke:color-mix(in oklab,var(--accent2) 55%,transparent)}
+.hv-exploded .key{fill:#1a2236}
+.hv-exploded .key.hot{fill:color-mix(in oklab,var(--accent) 55%,#1a2236)}
+.hv-exploded .backlight{fill:var(--accent);opacity:.16}
+.hv-exploded .traces path{fill:none;stroke:var(--accent2);stroke-opacity:.12;stroke-width:1}
+.hv-exploded .pipes path{fill:none;stroke:var(--accent);stroke-opacity:.5;stroke-width:6;stroke-linecap:round}
+.hv-exploded .ant{fill:none;stroke:rgba(190,215,255,.3);stroke-width:1}
+.hv-exploded .batfill{fill:var(--accent2);opacity:.16}
+.hv-exploded .pt{font:500 14px var(--display);fill:var(--mute);letter-spacing:-.02em}
+.hv-exploded .pt.sm{font:400 9px var(--text);fill:var(--faint);letter-spacing:0}
+.hv-exploded .cz{fill:color-mix(in oklab,var(--accent) 24%,transparent);stroke:var(--accent);stroke-width:1.6;opacity:0;cursor:pointer;
+  transition:opacity calc(220ms*var(--f))}
+.hv-exploded .ly.on .cz{opacity:.18}
+.hv-exploded .cz.lit,.hv-exploded .ly.on .cz.lit{opacity:1;animation:exPulse calc(1400ms*var(--f) + 200ms) ease-in-out infinite alternate}
+html[data-int=min] .hv-exploded .cz.lit{animation:none}
+@keyframes exPulse{from{opacity:1}to{opacity:.62}}
+
+.hv-exploded .lab{cursor:pointer;transition:opacity calc(220ms*var(--f))}
+.hv-exploded .lab line{stroke:rgba(190,215,255,.28);stroke-width:1;stroke-dasharray:2 3;transition:stroke calc(200ms*var(--f))}
+.hv-exploded .lab circle{fill:var(--accent2);transition:fill calc(200ms*var(--f))}
+.hv-exploded .lab text{font:500 13px var(--text);fill:var(--mute);transition:fill calc(200ms*var(--f))}
+.hv-exploded .lab:hover text,.hv-exploded .lab.on text{fill:var(--ink)}
+.hv-exploded .lab.on line{stroke:var(--accent2);stroke-dasharray:none}
+.hv-exploded .lab.on circle{fill:var(--accent)}
+.hv-exploded .lab.on text{opacity:0}
+.hv-exploded .lab.dim{opacity:.35}
+
+.hv-exploded .ex-card{position:absolute;left:0;top:0;width:264px;padding:14px 14px 10px;border-radius:var(--r-m);z-index:5;opacity:0;pointer-events:none;
+  background:color-mix(in oklab,var(--deep) 94%,transparent);border:1px solid var(--line2);box-shadow:0 24px 60px -24px rgba(0,0,0,.85);will-change:transform,opacity}
+.hv-exploded .ex-card.on{pointer-events:auto}
+.hv-exploded .ex-card .k{font:500 15px/1.25 var(--display);letter-spacing:-.015em}
+.hv-exploded .ex-card p{color:var(--mute);font-size:12px;margin:5px 0 8px}
+.hv-exploded .crs{display:flex;flex-direction:column;gap:2px;margin:0 -6px}
+.hv-exploded .cr{display:flex;align-items:center;gap:10px;width:100%;padding:7px 6px;border-radius:10px;text-align:left;color:var(--mute);
+  transition:background-color calc(150ms*var(--f)),color calc(150ms*var(--f)),transform calc(200ms*var(--f)) cubic-bezier(.2,.9,.3,1.25)}
+.hv-exploded .cr:hover,.hv-exploded .cr.on{background:var(--raise2);color:var(--ink);transform:translateX(2px)}
+.hv-exploded .cr .ci{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--raise2);color:var(--accent2);flex:none}
+.hv-exploded .cr.on .ci{color:var(--accent)}
+.hv-exploded .cr .ci svg{width:15px;height:15px}
+.hv-exploded .cr .ct{flex:1;min-width:0}
+.hv-exploded .cr .ct b{display:block;font-weight:500;font-size:12.5px;color:var(--ink)}
+.hv-exploded .cr .ct span{display:block;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hv-exploded .cr>svg{width:14px;height:14px;color:var(--faint)}
+.hv-exploded .fans{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:4px}
+.hv-exploded .fans b{display:block;font:500 20px var(--display);letter-spacing:-.03em}
+.hv-exploded .fans span{font-size:11.5px;color:var(--mute)}
+.hv-exploded .ex-hint{position:absolute;left:50%;bottom:6px;transform:translate3d(-50%,0,0);font-size:12px;color:var(--faint);white-space:nowrap;pointer-events:none}

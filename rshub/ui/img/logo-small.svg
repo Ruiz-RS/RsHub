@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- RsHub app icon, simplified for 32 px and below (favicons, small UI): no stars, shadow or glow,
+       a bolder ring and a bigger planet. The full drawing is logo.svg. -->
+  <defs>
+    <clipPath id="t"><rect x=".96" y=".96" width="30.08" height="30.08" rx="7"/></clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A4E"/>
+      <stop offset="1" stop-color="#070B16"/>
+    </linearGradient>
+    <radialGradient id="pl" cx="12.8" cy="13.6" r="13.7" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFBAA6"/>
+      <stop offset=".6" stop-color="#FC7A66"/>
+      <stop offset="1" stop-color="#B53A3F"/>
+    </radialGradient>
+  </defs>
+  <g clip-path="url(#t)">
+    <rect width="32" height="32" fill="url(#bg)"/>
+    <g transform="rotate(-20 16 16.96)" fill="none" stroke-width="2.56">
+      <path d="M4.16 16.96A11.84 3.36 0 0 1 27.84 16.96" stroke="#7FB4E4"/>
+    </g>
+    <circle cx="16" cy="16.96" r="7.2" fill="url(#pl)"/>
+    <g transform="rotate(-20 16 16.96)" fill="none" stroke-width="2.56">
+      <path d="M27.84 16.96A11.84 3.36 0 0 1 4.16 16.96" stroke="#C4EAFF"/>
+    </g>
+    <circle cx="25.12" cy="5.92" r="2.08" fill="#E2F2FF"/>
+  </g>
+</svg>

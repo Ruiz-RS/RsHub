@@ -1,0 +1,162 @@
+/* RsHub · Home: header grid + three aligned columns (live status, components, what is pending). */
+#v-home{--lw:clamp(256px,22vw,380px);--rw:clamp(248px,21vw,360px)}
+.home-grid{position:absolute;inset:8px 30px var(--dockspace) 30px;display:grid;grid-template-columns:var(--lw) minmax(0,1fr) var(--rw);
+  grid-template-rows:auto minmax(0,1fr);column-gap:26px;row-gap:20px}
+
+/* header */
+.h-head{grid-column:1 / -1;display:flex;align-items:flex-end;gap:34px;min-width:0}
+.h-id{min-width:0;flex:0 1 auto}
+.h-id .model{font:500 34px/1.08 var(--display);letter-spacing:-.032em;white-space:nowrap}
+.h-id .sub{color:var(--mute);margin-top:7px;font-size:13.5px;white-space:nowrap}
+.facts{display:flex;padding-bottom:3px;flex:none}
+.facts div{padding:0 20px;border-left:1px solid var(--line)}
+.facts div:first-child{padding-left:0;border-left:0}
+.facts b{display:block;font:500 20px var(--display);letter-spacing:-.02em}
+.facts span{font-size:12px;color:var(--faint);white-space:nowrap}
+.h-quick{margin-left:auto;display:flex;gap:8px;padding-bottom:4px;flex:none}
+.h-quick .btn{height:36px}
+.wbtn .wdot{width:26px;height:15px;border-radius:9px;background:var(--raise3);position:relative;transition:background-color calc(200ms*var(--f))}
+.wbtn .wdot::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--mute);
+  transition:transform calc(300ms*var(--f)) var(--e-snap),background-color calc(200ms*var(--f))}
+.wbtn.on .wdot{background:color-mix(in oklab,var(--accent) 40%,transparent)}
+.wbtn.on .wdot::after{transform:translateX(11px);background:var(--accent)}
+#widgetBtn.on{color:var(--accent)}
+
+/* columns */
+.h-col{min-height:0;display:flex;flex-direction:column;gap:14px}
+.h-col>.pan{min-height:0}
+
+/* live status */
+.vitals{flex:1;padding:14px 8px 8px;display:flex;flex-direction:column}
+.vitals>h4{padding:0 10px}
+.vit-list{flex:1;display:flex;flex-direction:column;justify-content:space-around;min-height:0}
+.vit{display:grid;grid-template-columns:30px 1fr auto;grid-template-rows:auto auto;column-gap:12px;row-gap:7px;align-items:center;width:100%;text-align:left;padding:8px 10px;border-radius:12px;
+  transition:background-color calc(160ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+.vit:hover{background:var(--raise2)}
+.vit:active{transform:scale(.985)}
+.vit .vi{grid-row:span 2;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--raise2);color:var(--mute);transition:color calc(160ms*var(--f))}
+.vit:hover .vi{color:var(--ink)}
+.vit .vi svg{width:16px;height:16px}
+.vit .vn{font-size:12.5px;color:var(--mute);transition:color calc(160ms*var(--f))}
+.vit:hover .vn{color:var(--ink)}
+.vit .vv{font-size:13px;font-weight:600;text-align:right;white-space:nowrap}
+.vit .vv small{color:var(--faint);font-weight:400;margin-left:3px}
+.vit .bar{grid-column:2 / span 2;height:4px}
+.vit .bar>span{transition:none;background:linear-gradient(90deg,color-mix(in oklab,var(--accent) 70%,var(--accent2)),var(--accent))}
+.vit.hot .bar>span{background:var(--warn)}
+
+/* center: components */
+.h-center{min-width:0;min-height:0;display:flex;flex-direction:column;gap:10px}
+.stage-head{display:flex;align-items:center;gap:10px;height:34px;flex:none}
+.stage-head h4{font-size:12.5px;font-weight:600;color:color-mix(in oklab,var(--ink) 86%,var(--mute))}
+.stage-head .chip{height:22px;font-size:11.5px}
+.vtoggle{margin-left:auto}
+.vtoggle .seg{grid-auto-columns:auto}
+.vtoggle .seg button{height:28px;display:flex;align-items:center;gap:7px;font-size:12px;padding:0 12px}
+.vtoggle .seg button svg{width:15px;height:15px}
+.stage{position:relative;flex:1;min-height:0}
+.stage>.vwrap{position:absolute;inset:0}
+
+/* right */
+.pending{padding:14px 8px 6px;flex:none}
+.pending>h4{padding:0 10px;margin-bottom:4px}
+.pend{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 10px;border-radius:12px;position:relative;
+  transition:background-color calc(180ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+.pend:hover{background:var(--raise2)}
+.pend:active{transform:scale(.985)}
+.pend b{font:500 21px var(--display);letter-spacing:-.03em;min-width:52px;color:var(--accent)}
+.pend b small{font-size:12px}
+.pend.alt b{color:var(--accent2)}
+.pend span{flex:1;color:var(--ink);font-size:12.5px;font-weight:500;line-height:1.35}
+.pend svg{color:var(--faint);transition:transform calc(220ms*var(--f)),color calc(180ms*var(--f))}
+.pend:hover svg{transform:translateX(3px);color:var(--ink)}
+.pend span small{display:block;font-size:11.5px;font-weight:400;color:var(--faint);margin-top:2px}
+.pend.unk b,.pend.ok b{min-width:52px;display:flex;align-items:center}
+.pend.unk b svg,.pend.ok b svg{width:22px;height:22px;color:var(--mute);stroke-width:1.8}
+.pend.ok b svg{color:var(--ok)}
+.pend.unk>svg:last-child,.pend.ok>svg:last-child{width:18px;height:18px}
+.nx-empty{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:10px 10px;font-size:12.5px;color:var(--mute)}
+/* running now (home.js renderActs): the module's icon inside the same ring as its dock icon, its status and percentage
+   on one line; finished ones carry the dock's badge until they are looked at */
+.act-rows:empty{display:none}
+.act-rows{padding-bottom:2px;margin-bottom:2px;border-bottom:1px solid var(--line)}
+.pend.act b.ar{position:relative;flex:none;min-width:0;width:36px;height:36px;margin:0 8px 0 6px;display:grid;place-items:center;color:var(--accent2);font:inherit}
+.pend.act b.ar>svg.i{grid-area:1/1;width:var(--ic-m);height:var(--ic-m);color:var(--accent2);transform:none}
+.pend.act b.ar .ring{grid-area:1/1;width:36px;height:36px;fill:none;overflow:visible;transform:none}
+.pend.act .ring .tr{stroke:var(--raise3);stroke-width:2}
+.pend.act .ring .arc{stroke:var(--accent2);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:calc(100 - var(--p,0)*100);
+  transition:stroke-dashoffset calc(520ms*var(--f)) var(--e-out)}
+.pend.act.ind .ring .arc{stroke-dashoffset:78}
+.pend.act.ind .ring{animation:dka-orbit calc(3200ms/max(var(--f),.5)) linear infinite}
+html[data-int=min] .pend.act.ind .ring{animation:none}
+@media (prefers-reduced-motion:reduce){.pend.act.ind .ring{animation:none}}
+.pend.act span{min-width:0}
+.pend.act span em{display:block;font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pend.act span small{display:flex;gap:6px;white-space:nowrap}
+.pend.act span small i{font-style:normal}
+.pend.act .at{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pend.act .ap{flex:none;color:var(--accent2)}
+.pend.act:is(.ok,.err) b.ar{background:var(--raise2);border-radius:50%}
+.pend.act .ab{position:absolute;right:-3px;top:-3px;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;background:var(--ok);box-shadow:0 0 0 2px var(--deep)}
+.pend.act.err .ab{background:var(--warn)}
+.pend.act .ab svg.i{width:10px;height:10px;stroke-width:var(--ic-w-bold);color:var(--void);transform:none}
+.pend.act:is(.ok,.err) .ap{color:var(--faint)}
+
+.healthp{flex:none;padding:14px 18px}
+/* it opens Live Monitor > Health: the same calm hover as the rows (a raised fill and a lighter edge) */
+.healthp[data-go]{cursor:pointer;transition:border-color calc(160ms*var(--f))}
+.healthp[data-go]::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--raise);opacity:0;pointer-events:none;transition:opacity calc(160ms*var(--f))}
+.healthp[data-go]:hover{border-color:var(--line2)}
+.healthp[data-go]:hover::after{opacity:1}
+.healthp .hh{display:flex;align-items:center;gap:14px}
+.healthp svg.g{width:46px;height:46px;transform:rotate(-90deg);flex:none}
+.healthp .hh b{display:block;font-weight:600;font-size:13.5px}
+.healthp .hh span{font-size:12px;color:var(--mute)}
+.healthp .hs{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.healthp .hs div{font-size:11.5px;color:var(--faint)}
+.healthp .hs div b{display:block;color:var(--ink);font-weight:500;font-size:12.5px;margin-top:1px}
+
+.nextp{flex:1;padding:10px 8px 8px;display:flex;flex-direction:column;overflow:hidden}
+.nx-head{padding:0 2px 6px}
+.nx-head .seg{display:inline-grid}
+.nx-head .seg button{height:28px;font-size:12px;padding:0 12px}
+.nx-pages{position:relative;flex:1;min-height:0;container-type:size}
+@container (max-height:150px){.nx-page .nx:nth-child(n+3){display:none}}
+.nx-page{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-around;visibility:hidden;overflow:hidden}
+.nx-page.on{visibility:visible}
+.nx{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8px 10px;border-radius:12px;transition:background-color calc(160ms*var(--f))}
+.nx:hover{background:var(--raise2)}
+.nx .ni{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;background:var(--raise2);color:var(--mute)}
+.nx .ni svg{width:15px;height:15px}
+.nx .nt{flex:1;min-width:0}
+.nx .nt b{display:block;font-weight:500;font-size:12.5px}
+.nx .nt span{display:block;font-size:11.5px;color:var(--mute)}
+.nx .nw{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.nextp .sub-h{font-size:12px;color:var(--faint);padding:10px 10px 2px}
+
+
+/* ---------- small window: the three columns get tighter instead of running under the dock ---------- */
+@media (max-height:780px){
+  .home-grid{row-gap:14px}
+  .h-id .model{font-size:30px}
+  .h-col{gap:10px}
+  .pending{padding:10px 6px 4px}
+  .pend{padding:5px 10px;gap:10px}
+  .pend b{font-size:18px;min-width:44px}
+  .pend span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .pend:not(.act) span small{display:none}
+  .pend.act span{display:block}
+  .act-rows .pend:nth-child(n+3){display:none}  /* two at most: the column must still fit above the dock */
+  .pend.act b.ar{width:30px;height:30px;margin:0 6px 0 4px}
+  .pend.act b.ar .ring{width:30px;height:30px}
+  .healthp{padding:10px 14px}
+  .healthp .hs{margin-top:8px;gap:6px 12px}
+  .healthp .hs div:nth-child(n+3){display:none}
+  .vit{padding:5px 10px;row-gap:5px}
+  .vit .vn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+}
+/* compact layout (base.css): Home lays out at least as tall as in a 760 px window and scrolls as one page; touch
+   on the 3D view pans the page vertically and still turns the model sideways */
+html[data-layout=scroll] .home-grid{position:relative;inset:auto;margin:8px 30px 0;height:max(calc(100% - 8px - var(--dockspace)),calc(var(--fit-h) - 8px - var(--dockspace)))}
+html[data-layout=scroll] .hv-model3d .m3-canvas{touch-action:pan-y}
+@container (max-height:110px){.nx-empty button{display:none}.nx-empty{padding:4px 10px}}

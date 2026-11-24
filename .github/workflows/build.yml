@@ -1,0 +1,119 @@
+# Builds RsHub from this repository: tests, RsHub.exe and the installer, with packaging/build.ps1 (the same
+# script used locally). Every push to main and every pull request is built and tested; for a version tag (v1.2.3)
+# the installer is kept as the artifact a release is published from, so releases come from source on GitHub, never
+# from a personal computer.
+#
+# Code signing (SignPath Foundation, see "Code signing policy" in the README) runs only once the project is accepted:
+# it needs the SIGNPATH_API_TOKEN secret and the SIGNPATH_ORGANIZATION_ID, SIGNPATH_PROJECT_SLUG and
+# SIGNPATH_POLICY_SLUG repository variables. Until then the step is skipped.
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 40
+    env:
+      SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Inno Setup 6.7.3 (pinned by hash and signature)
+        shell: pwsh
+        run: |
+          $f = "$env:RUNNER_TEMP\innosetup-6.7.3.exe"
+          Invoke-WebRequest https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe -OutFile $f
+          if ((Get-FileHash $f -Algorithm SHA256).Hash -ne '9C73C3BAE7ED48D44112A0F48E66742C00090BDB5BEF71D9D3C056C66E97B732') {
+            throw 'The Inno Setup download does not match its pinned SHA-256'
+          }
+          $sig = Get-AuthenticodeSignature $f
+          if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'O=Pyrsys B\.V\.') { throw 'Inno Setup is not signed by its author' }
+          Start-Process $f -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', '/CURRENTUSER', "/DIR=$env:RUNNER_TEMP\inno" -Wait
+          "RSHUB_ISCC=$env:RUNNER_TEMP\inno\ISCC.exe" >> $env:GITHUB_ENV
+
+      # PyInstaller's prebuilt bootloader is the same bytes in thousands of programs (some of them malware) and
+      # antivirus machine-learning models flag programs that match it. Releases compile their own from PyInstaller's
+      # source distribution with the runner's MSVC: packaging/build.ps1 installs `pyinstaller==<pinned>` with
+      # PYINSTALLER_COMPILE_BOOTLOADER=1 and --no-binary pyinstaller, then packaging/check_bootloader.py compares the
+      # resulting run.exe / runw.exe with the ones in the official wheel and the build FAILS if they are identical
+      # (a compile that silently fell back to the prebuilt files).
+      - name: Compile PyInstaller's bootloader (MSVC check)
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vs) { throw 'No MSVC C++ compiler on the runner: the bootloader cannot be compiled' }
+          "Using the C++ tools in $vs"
+          "RSHUB_COMPILE_BOOTLOADER=1" >> $env:GITHUB_ENV
+          "RSHUB_REQUIRE_COMPILED_BOOTLOADER=1" >> $env:GITHUB_ENV
+
+      - name: Build (tests, RsHub.exe, installer)
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File packaging\build.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Logs
+        if: failure()
+        shell: pwsh
+        run: Get-ChildItem build\logs | ForEach-Object { "===== $($_.Name)"; Get-Content $_.FullName -Tail 60 }
+
+      - name: Verify the compiled bootloader
+        shell: pwsh
+        run: |
+          # build.ps1 already refuses a fallback; this is the independent second look (and goes in the job log)
+          .\.buildenv\Scripts\python.exe packaging\check_bootloader.py
+          if ($LASTEXITCODE -ne 0) { throw 'The release was built with the prebuilt PyInstaller bootloader' }
+
+      - name: Keep the installer
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: RsHub-Setup
+          path: |
+            dist/RsHub-Setup-*.exe
+            dist/RsHub-Setup-*.exe.sha256
+            dist/RsHub-Portable-*.zip
+            dist/RsHub-Portable-*.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Sign (SignPath Foundation)
+        if: env.SIGNPATH_API_TOKEN != '' && startsWith(github.ref, 'refs/tags/v')
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.upload.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Hash of the signed installer
+        if: env.SIGNPATH_API_TOKEN != '' && startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          Get-ChildItem signed -Filter 'RsHub-Setup-*.exe' | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash)  $($_.Name)" | Set-Content "$($_.FullName).sha256" -Encoding ascii
+          }
+
+      - name: Keep the signed installer
+        if: env.SIGNPATH_API_TOKEN != '' && startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: RsHub-Setup-signed
+          path: signed/RsHub-Setup-*
+          if-no-files-found: error

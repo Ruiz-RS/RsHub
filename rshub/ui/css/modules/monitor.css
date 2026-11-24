@@ -1,0 +1,371 @@
+/* RsHub · Live Monitor (everything under #v-monitor) */
+#v-monitor .pan>h4{min-height:22px}
+#v-monitor .goto{display:inline-flex;align-items:center;gap:var(--sp-xs);color:var(--mute);font-weight:500;border-radius:var(--r-s);padding:1px 4px 1px 0;transition:color calc(160ms*var(--f))}
+#v-monitor .goto svg{width:var(--ic-s);height:var(--ic-s);opacity:0;transform:translateX(-4px);transition:opacity calc(160ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+#v-monitor .goto:hover{color:var(--ink)}
+#v-monitor .goto:hover svg{opacity:1;transform:none}
+#v-monitor canvas.ch{display:block;width:100%;height:100%;cursor:crosshair}
+#v-monitor .big{font-size:var(--fs-n3)}
+#v-monitor .muted{font-size:var(--fs-sm)}
+#v-monitor .mnote{font-size:var(--fs-sm);color:var(--mute);margin-top:12px;line-height:1.5;padding:10px 12px;border-radius:var(--r-m);background:var(--raise);border:1px solid var(--line)}
+
+/* ---------- overview ---------- */
+#v-monitor .tab[data-tab=overview]{overflow:auto}
+#v-monitor .ov{height:100%;min-height:470px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(240px,1.3fr) minmax(200px,1fr);gap:var(--sp-md)}
+#v-monitor .ov .pan{display:flex;flex-direction:column;overflow:hidden}
+#v-monitor .p-cpu{grid-column:span 7} #v-monitor .p-gpu{grid-column:span 5}
+#v-monitor .p-ram,#v-monitor .p-net,#v-monitor .p-disk{grid-column:span 4}
+#v-monitor .ov canvas.ch{flex:1 1 0;height:0;min-height:0;margin-top:10px}
+#v-monitor .top3{display:flex;align-items:flex-end;gap:var(--sp-xl)}
+#v-monitor .meta{font-size:var(--fs-sm);color:var(--mute);padding-bottom:4px}
+#v-monitor .meta b{color:var(--ink);font-weight:500}
+#v-monitor .threads{display:grid;grid-template-columns:repeat(24,1fr);gap:var(--sp-xs);height:40px;margin-top:10px;flex:none}
+#v-monitor .threads i{display:block;border-radius:var(--r-xs);background:var(--raise2);position:relative;overflow:hidden}
+#v-monitor .threads i b,#v-monitor .th b{position:absolute;inset:0;transform-origin:50% 100%;transform:scaleY(0);border-radius:var(--r-xs);background:linear-gradient(0deg,var(--accent2),color-mix(in oklab,var(--accent2) 40%,var(--accent)));will-change:transform}
+#v-monitor .gbody{flex:1;display:flex;align-items:center;gap:var(--sp-xl);min-height:0}
+#v-monitor .gauge{width:150px;height:150px;position:relative;flex:none}
+#v-monitor .gauge svg{width:100%;height:100%;transform:rotate(135deg)}
+#v-monitor .gauge .gv{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+#v-monitor .gauge .gv b{font:500 var(--fs-n2)/1 var(--display);letter-spacing:-.04em;display:block}
+#v-monitor .gauge .gv span{font-size:var(--fs-cap);color:var(--mute)}
+#v-monitor .gstats{flex:1;display:flex;flex-direction:column;gap:var(--sp-md)}
+#v-monitor .gstats .s{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .gstats .s b{display:block;font:500 var(--fs-h2) var(--display);color:var(--ink);letter-spacing:-.02em}
+#v-monitor .gstats .bar,#v-monitor .vram .bar{margin-top:7px}
+#v-monitor .pair{display:flex;flex-wrap:wrap;gap:6px var(--sp-xl);margin-top:2px}
+#v-monitor .pair div{font-size:var(--fs-cap);color:var(--mute);display:flex;align-items:center;gap:var(--sp-sm)}
+#v-monitor .pair i{width:8px;height:8px;border-radius:50%;flex:none}
+#v-monitor .pair b{font:500 var(--fs-h2) var(--display);color:var(--ink);letter-spacing:-.02em}
+#v-monitor .pair.big2 b{font-size:var(--fs-n1)}
+
+/* "top users" lists */
+#v-monitor .tops{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+#v-monitor .tp{display:grid;grid-template-columns:26px 1fr auto;grid-template-rows:auto 3px;column-gap:var(--sp-sm);row-gap:5px;align-items:center;padding:6px 4px;border-radius:var(--r-s)}
+#v-monitor .tp .mono{grid-row:span 2}
+#v-monitor .tp .tn{font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-monitor .tp .tv{font-size:var(--fs-sm);color:var(--mute);text-align:right}
+#v-monitor .tp .bar{grid-column:2/span 2;height:3px}
+#v-monitor .tp .bar>span{transition:transform calc(600ms*var(--f)) cubic-bezier(.16,1,.3,1)}
+#v-monitor .mono{width:26px;height:26px;border-radius:var(--r-s);display:grid;place-items:center;font:600 var(--fs-cap) var(--text);color:var(--mute);background:var(--raise2);border:1px solid var(--line);flex:none}
+
+/* ---------- tab grids ---------- */
+#v-monitor .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-md);align-content:start}
+#v-monitor .grid>.wide{grid-column:span 2}
+#v-monitor .g-cpu>:nth-child(5){grid-column:1/-1}
+#v-monitor .g-cpu>:nth-child(5) .spec{grid-template-columns:repeat(4,auto 1fr);column-gap:var(--sp-xl)}
+#v-monitor .g-cpu>:nth-child(5) .spec dd{text-align:left}
+#v-monitor .g-gpu>:nth-child(1){grid-row:span 2}
+#v-monitor .g-gpu>:nth-child(4){grid-column:span 2}
+#v-monitor .g-mem>:nth-child(3){grid-column:span 2}
+#v-monitor .g-disk>:nth-child(3){grid-column:span 2}
+#v-monitor .g-bat,#v-monitor .g-health{grid-template-columns:repeat(2,minmax(0,1fr))}
+#v-monitor .g-bat>.wide,#v-monitor .g-health>.wide{grid-column:1/-1}
+@media (max-width:1180px){
+  #v-monitor .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #v-monitor .grid>*{grid-column:auto!important;grid-row:auto!important}
+  #v-monitor .grid>.wide{grid-column:1/-1!important}
+  #v-monitor .g-cpu>:nth-child(5) .spec{grid-template-columns:auto 1fr}
+}
+#v-monitor .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--sp-lg);flex-wrap:wrap}
+#v-monitor .legend{display:flex;flex-wrap:wrap;gap:6px var(--sp-md);font-size:var(--fs-sm);color:var(--mute);padding-bottom:6px}
+#v-monitor .legend span{display:flex;align-items:center;gap:var(--sp-sm)}
+#v-monitor .legend i{width:10px;height:10px;border-radius:var(--r-xs);flex:none}
+#v-monitor .legend i.dash{height:0;border-top:2px dashed;border-radius:0;width:14px}
+#v-monitor .legend b{color:var(--ink);font-weight:500}
+#v-monitor .chwrap{height:180px;margin-top:12px}
+#v-monitor .chwrap.tall{height:230px}
+#v-monitor .chwrap.sm{height:84px}
+#v-monitor .axis{display:flex;justify-content:space-between;font-size:var(--fs-cap);color:var(--faint);margin-top:6px}
+
+/* data blocks */
+#v-monitor .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-md) var(--sp-md)}
+#v-monitor .stats.s3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#v-monitor .stats.s4{grid-template-columns:repeat(2,minmax(0,1fr))}
+#v-monitor .st{display:flex;flex-direction:column;gap:3px;min-width:0}
+#v-monitor .st .sl{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .st b{font:500 var(--fs-h2)/1.15 var(--display);letter-spacing:-.02em;display:flex;align-items:baseline;gap:5px;white-space:nowrap}
+#v-monitor .st b small{font:400 var(--fs-sm) var(--text);color:var(--mute);letter-spacing:0}
+#v-monitor .st .ss{font-size:var(--fs-cap);color:var(--faint)}
+#v-monitor svg.fan{width:16px;height:16px;align-self:center;color:var(--accent2);will-change:transform}
+#v-monitor .spec{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-sm) var(--sp-md);font-size:var(--fs-sm);margin-top:4px}
+#v-monitor .spec dt{color:var(--mute);white-space:nowrap}
+#v-monitor .spec dd{text-align:right;min-width:0}
+#v-monitor .spec dd.reveal{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-xs)}
+#v-monitor .spec .iconbtn{width:26px;height:26px}
+#v-monitor .spec .iconbtn svg{width:var(--ic-m);height:var(--ic-m)}
+
+/* cores */
+#v-monitor .cores{display:flex;gap:var(--sp-xl)}
+#v-monitor .cg{display:flex;flex-direction:column;gap:var(--sp-sm);min-width:0}
+#v-monitor .cg:first-child{flex:2} #v-monitor .cg:last-child{flex:1}
+#v-monitor .cgl{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .pc,#v-monitor .ec{display:grid;gap:6px}
+#v-monitor .pc{grid-template-columns:repeat(8,minmax(0,1fr))} #v-monitor .ec{grid-template-columns:repeat(8,minmax(0,1fr))}
+#v-monitor .core{display:flex;flex-direction:column;align-items:center;gap:6px}
+#v-monitor .core .th{position:relative;width:100%;height:46px;border-radius:var(--r-xs);background:var(--raise2);overflow:hidden}
+#v-monitor .core:not(.e){display:grid;grid-template-columns:1fr 1fr;column-gap:3px}
+#v-monitor .core:not(.e) span{grid-column:1/-1;text-align:center}
+#v-monitor .core.e .th b{background:linear-gradient(0deg,var(--accent),color-mix(in oklab,var(--accent) 50%,var(--accent2)))}
+#v-monitor .core span{font-size:var(--fs-cap);color:var(--faint)}
+
+/* graphics */
+#v-monitor .gpuhero{display:flex;align-items:center;gap:var(--sp-xl)}
+#v-monitor .gpuhero .stats{flex:1}
+#v-monitor .vram{margin-top:16px;display:grid;grid-template-columns:1fr auto;gap:0 var(--sp-md);font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .vram b{color:var(--ink);font-weight:500}
+#v-monitor .vram .bar{grid-column:1/-1}
+
+/* memory */
+#v-monitor .stack{position:relative;height:12px;border-radius:var(--r-s);background:var(--raise3);overflow:hidden;margin-top:6px}
+#v-monitor .stack span{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);will-change:transform}
+#v-monitor .stack .s1{background:var(--accent);border-radius:var(--r-s) 0 0 var(--r-s)}
+#v-monitor .stack .s2{background:var(--accent2)}
+#v-monitor .slots{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md)}
+#v-monitor .slot{padding:12px;border-radius:var(--r-m);border:1px solid var(--line);background:var(--raise);display:flex;flex-direction:column;gap:var(--sp-xs);font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .slot b{color:var(--ink);font-weight:500;font-size:var(--fs-sm);margin-top:6px}
+#v-monitor .stick{height:30px;border-radius:var(--r-xs);background:linear-gradient(180deg,color-mix(in oklab,var(--accent2) 30%,var(--deep)),var(--deep));border:1px solid color-mix(in oklab,var(--accent2) 40%,transparent);display:flex;align-items:center;gap:var(--sp-xs);padding:0 6px;position:relative}
+#v-monitor .stick::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:4px;background:repeating-linear-gradient(90deg,var(--warn) 0 2px,transparent 2px 4px);opacity:.7}
+#v-monitor .stick i{flex:1;height:14px;border-radius:var(--r-xs);background:color-mix(in oklab,var(--ink) 18%,var(--deep))}
+#v-monitor .stick.empty{background:none;border:1.5px dashed var(--line2)}
+#v-monitor .stick.empty::after{display:none}
+#v-monitor .slot.on .stick{border-color:color-mix(in oklab,var(--accent2) 60%,transparent);box-shadow:0 8px 16px -10px rgba(0,0,0,.8)}
+html[data-int=min] #v-monitor .slot.on .stick{animation:none}
+
+/* disks */
+#v-monitor .health-big{display:flex;align-items:center;gap:var(--sp-md);margin:4px 0 14px}
+#v-monitor svg.ring{width:54px;height:54px;transform:rotate(-90deg);flex:none}
+#v-monitor .health-big b{display:block;font:500 var(--fs-h2) var(--display);letter-spacing:-.02em}
+#v-monitor .health-big span{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .health-big b{display:flex;align-items:baseline;gap:0;font-size:var(--fs-n1)}
+#v-monitor .health-big b span{font:inherit;color:inherit}
+#v-monitor .health-big>div>span{display:block}
+#v-monitor .part{margin-bottom:14px}
+/* several disks: one health card each, volumes grouped under the disk name */
+#v-monitor .dcard+.dcard{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+#v-monitor .dname{margin:0 0 8px;font-size:var(--fs-sm);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-monitor .dname em{font-style:normal;color:var(--accent2);margin-left:4px}
+#v-monitor #dVols .dname:not(:first-child){margin-top:16px}
+/* busy: DNS change, first processes reading */
+#v-monitor .m-spin{display:inline-block;vertical-align:-2px;width:12px;height:12px;margin-right:8px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;opacity:.85;animation:mSpin calc(800ms + 400ms*(1 - var(--f))) linear infinite}
+html[data-int=min] #v-monitor .m-spin{animation-duration:2.4s}
+@keyframes mSpin{to{transform:rotate(360deg)}}
+#v-monitor .seg.pending{cursor:progress}
+#v-monitor .seg.pending button:disabled{opacity:1}
+#v-monitor .seg.pending .ind{animation:mPend calc(900ms*var(--f) + 300ms) ease-in-out infinite alternate}
+html[data-int=min] #v-monitor .seg.pending .ind{animation:none}
+@keyframes mPend{from{opacity:1}to{opacity:.45}}
+#v-monitor .p-sk{padding:8px}
+#v-monitor .pl{display:flex;align-items:baseline;gap:var(--sp-sm);font-size:var(--fs-sm);margin-bottom:7px}
+#v-monitor .pl b{font-weight:500}
+#v-monitor .pl span{color:var(--faint);font-size:var(--fs-sm)}
+#v-monitor .pl em{font-style:normal;margin-left:auto;color:var(--mute);font-size:var(--fs-sm)}
+#v-monitor .part .bar>span,#v-monitor .vram .bar>span,#v-monitor .gstats .bar>span,#v-monitor .p-ram .bar>span{transition:none;transform:scaleX(0)}
+
+/* network */
+#v-monitor .wifi{display:flex;align-items:center;gap:var(--sp-md);margin-bottom:12px}
+#v-monitor .wifi b{display:block;font-weight:500}
+#v-monitor .wifi span{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .sig{display:flex;align-items:flex-end;gap:3px;height:20px}
+#v-monitor .sig i{width:5px;border-radius:var(--r-xs);background:var(--raise3);transition:background-color calc(300ms*var(--f)),transform calc(300ms*var(--f)) var(--e-snap);transform-origin:50% 100%}
+#v-monitor .sig i:nth-child(1){height:6px} #v-monitor .sig i:nth-child(2){height:10px} #v-monitor .sig i:nth-child(3){height:15px} #v-monitor .sig i:nth-child(4){height:20px}
+#v-monitor .sig i.on{background:var(--accent2)}
+#v-monitor .mini{display:flex;gap:var(--sp-lg);font-size:var(--fs-sm);color:var(--mute);margin-top:10px}
+#v-monitor .mini b{color:var(--ink);font-weight:500}
+
+/* battery */
+#v-monitor .batrow{display:flex;align-items:center;gap:var(--sp-xl);margin-bottom:16px}
+#v-monitor .batt{position:relative;display:flex;align-items:center;flex:none}
+#v-monitor .batt .body{width:116px;height:54px;border-radius:var(--r-m);border:2px solid var(--line2);padding:5px;position:relative;overflow:hidden}
+#v-monitor .batt .body span{display:block;height:100%;border-radius:var(--r-s);background:linear-gradient(90deg,color-mix(in oklab,var(--ok) 70%,var(--deep)),var(--ok));transform-origin:0 50%;transform:scaleX(0)}
+#v-monitor .batt .cap{width:6px;height:20px;border-radius:0 var(--r-xs) var(--r-xs) 0;background:var(--line2);margin-left:2px}
+#v-monitor .batt .bolt{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -14px;color:var(--void);fill:var(--void);stroke:var(--void);animation:mon-pulse calc(1600ms*var(--f) + 500ms) ease-in-out infinite alternate}
+@keyframes mon-pulse{from{opacity:.55;transform:scale(.92)}to{opacity:1;transform:scale(1.06)}}
+html[data-int=min] #v-monitor .batt .bolt{animation:none}
+
+/* processes */
+#v-monitor .procs{height:100%;display:flex;flex-direction:column;gap:var(--sp-md);min-height:0}
+#v-monitor .ptools{display:flex;align-items:center;gap:var(--sp-md);flex:none}
+#v-monitor .ptools .field{width:300px}
+#v-monitor .ptools .hint{margin-left:auto;font-size:var(--fs-sm)}
+#v-monitor .ptable{flex:1;min-height:0;display:flex;flex-direction:column;padding:8px 8px 4px}
+#v-monitor .ph,#v-monitor .pr{display:grid;grid-template-columns:30px minmax(150px,1fr) repeat(5,88px) 72px;gap:var(--sp-md);align-items:center}
+#v-monitor .ph{grid-template-columns:minmax(192px,1fr) repeat(5,88px) 72px;padding:4px 10px 10px;border-bottom:1px solid var(--line);flex:none}
+#v-monitor .ph button{display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-xs);font-size:var(--fs-sm);color:var(--faint);height:26px;border-radius:var(--r-s);transition:color calc(160ms*var(--f))}
+#v-monitor .ph button:first-child{justify-content:flex-start}
+#v-monitor .ph button:hover{color:var(--ink)}
+#v-monitor .ph button.on{color:var(--ink)}
+#v-monitor .ph button svg{width:var(--ic-s);height:var(--ic-s);opacity:0;transition:opacity calc(160ms*var(--f)),transform calc(260ms*var(--f)) var(--e-snap)}
+#v-monitor .ph button.on svg{opacity:1}
+#v-monitor .ph button.asc svg{transform:rotate(180deg)}
+#v-monitor .pb{flex:1;overflow:auto;padding:6px 2px 4px;position:relative}
+#v-monitor .pr{padding:7px 8px;border-radius:var(--r-s);position:relative;transition:background-color calc(140ms*var(--f))}
+#v-monitor .pr:hover{background:var(--raise2)}
+#v-monitor .pn{min-width:0}
+#v-monitor .pn b{display:block;font-weight:500;font-size:var(--fs-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-monitor .pn span{display:block;font-size:var(--fs-cap);color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-monitor .pr .c{text-align:right;font-size:var(--fs-sm);padding:4px 8px;border-radius:var(--r-s);background:color-mix(in oklab,var(--accent) calc(var(--h,0) * 30%),transparent);transition:background-color calc(500ms*var(--f))}
+#v-monitor .pa{display:flex;justify-content:flex-end;gap:2px;opacity:0;transform:translateX(6px);transition:opacity calc(150ms*var(--f)),transform calc(220ms*var(--f)) var(--e-snap)}
+#v-monitor .pr:hover .pa,#v-monitor .pa:focus-within{opacity:1;transform:none}
+#v-monitor .pa .iconbtn{width:30px;height:30px}
+#v-monitor .pa .iconbtn svg{width:var(--ic-m);height:var(--ic-m)}
+#v-monitor .pa .iconbtn[data-pact=end]:hover{color:var(--bad);background:color-mix(in oklab,var(--bad) 14%,transparent)}
+#v-monitor .pa .iconbtn[disabled]{opacity:.3;pointer-events:none}
+
+/* confirmation dialog */
+#v-monitor .mdlg{position:absolute;inset:0;z-index:50;visibility:hidden;display:grid;place-items:center}
+#v-monitor .mdlg.on{visibility:visible}
+#v-monitor .mdlg .scrim{position:absolute;inset:0;background:rgba(3,5,11,.55)}
+#v-monitor .mdlg .box{position:relative;width:min(400px,90%);padding:22px;border-radius:var(--r-l);background:var(--deep);border:1px solid var(--line2);box-shadow:0 40px 100px -30px rgba(0,0,0,.9)}
+#v-monitor .mdlg .bi{width:40px;height:40px;border-radius:var(--r-m);display:grid;place-items:center;color:var(--bad);background:color-mix(in oklab,var(--bad) 14%,transparent);margin-bottom:14px}
+#v-monitor .mdlg h3{font:500 var(--fs-h3) var(--display);letter-spacing:-.015em;margin-bottom:8px}
+#v-monitor .mdlg p{color:var(--mute);font-size:var(--fs-body);margin-bottom:18px}
+#v-monitor .mdlg .row-btns{justify-content:flex-end}
+
+/* health */
+#v-monitor .allok{display:flex;align-items:center;gap:var(--sp-xl)}
+#v-monitor .okt{flex:1;min-width:0}
+#v-monitor .okt h3{font:500 var(--fs-h2) var(--display);letter-spacing:-.02em;margin-bottom:6px}
+#v-monitor .okt p{color:var(--mute);font-size:var(--fs-body);max-width:520px}
+#v-monitor .allok .stats{flex:1.2}
+#v-monitor svg.okmark{width:64px;height:64px;flex:none;fill:none;stroke:var(--ok);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#v-monitor svg.okmark circle{stroke-dasharray:145;stroke-dashoffset:145;opacity:.5}
+#v-monitor svg.okmark path{stroke-dasharray:36;stroke-dashoffset:36}
+#v-monitor svg.okmark.go circle{animation:mon-draw calc(800ms*var(--f)) cubic-bezier(.16,1,.3,1) forwards}
+#v-monitor svg.okmark.go path{animation:mon-draw calc(520ms*var(--f)) cubic-bezier(.16,1,.3,1) calc(380ms*var(--f)) forwards}
+@keyframes mon-draw{to{stroke-dashoffset:0}}
+#v-monitor .devs{display:grid;grid-template-columns:1fr;gap:2px}
+#v-monitor .dv{display:grid;grid-template-columns:30px 1fr auto auto;align-items:center;gap:var(--sp-sm);padding:5px 6px;border-radius:var(--r-s);font-size:var(--fs-sm);transition:background-color calc(140ms*var(--f))}
+#v-monitor .dv:hover{background:var(--raise2)}
+#v-monitor .dv .ri{width:30px;height:30px;border-radius:var(--r-s);display:grid;place-items:center;background:var(--raise2);color:var(--mute)}
+#v-monitor .dv .ri svg{width:var(--ic-m);height:var(--ic-m)}
+#v-monitor .dv em{font-style:normal;color:var(--faint);font-size:var(--fs-sm)}
+#v-monitor .dv .chip{height:22px;font-size:var(--fs-cap)}
+#v-monitor .g-health .rows{margin-bottom:16px}
+#v-monitor .maxt{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-md)}
+#v-monitor .maxt div{padding:12px;border-radius:var(--r-m);background:var(--raise);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+#v-monitor .maxt div>span{font-size:var(--fs-sm);color:var(--mute)}
+#v-monitor .maxt b{font:500 var(--fs-h2) var(--display);letter-spacing:-.02em}
+#v-monitor .maxt em{font-style:normal;font-size:var(--fs-cap);color:var(--faint)}
+#v-monitor .events{display:flex;flex-direction:column;gap:var(--sp-xs)}
+#v-monitor .evt{display:grid;grid-template-columns:14px 1fr auto;gap:var(--sp-md);align-items:start;padding:10px 8px;border-radius:var(--r-m);transition:background-color calc(140ms*var(--f))}
+#v-monitor .evt:hover{background:var(--raise2)}
+#v-monitor .evt b{font-weight:500;font-size:var(--fs-body)}
+#v-monitor .evt p{font-size:var(--fs-sm);color:var(--mute);margin-top:2px}
+#v-monitor .evt time{font-size:var(--fs-sm);color:var(--faint);white-space:nowrap}
+#v-monitor .dotc{width:9px;height:9px;border-radius:50%;margin-top:5px;background:var(--faint)}
+#v-monitor .dotc.bad{background:var(--bad);box-shadow:0 0 0 4px color-mix(in oklab,var(--bad) 18%,transparent)}
+#v-monitor .dotc.warn{background:var(--warn);box-shadow:0 0 0 4px color-mix(in oklab,var(--warn) 18%,transparent)}
+
+/* adjustments after reviewing screenshots */
+#v-monitor .subnav .bd[hidden]{display:none}
+#v-monitor .ov .big{font-size:var(--fs-n2)}
+#v-monitor .ov .tops{margin-top:6px;gap:0}
+#v-monitor .ov .tp{padding:3px 4px;row-gap:var(--sp-xs)}
+#v-monitor .ov .tp .mono{width:22px;height:22px;font-size:var(--fs-cap);border-radius:var(--r-s)}
+#v-monitor .p-ram .tops{overflow:hidden;min-height:0}
+#v-monitor .gpuhero .stats.s4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1180px){#v-monitor .gpuhero .stats.s4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#v-monitor .g-bat .chwrap.tall{height:190px}
+#v-monitor .g-mem>:nth-child(3) .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+/* ---------- layout: each tab takes exactly the available height ----------
+   A 3-column, 2-row grid that stretches down to the dock; charts grow with their panel and whatever does
+   not fit scrolls inside the panel body (with no background of its own: core.js adds the fade).
+   If the window is very short, the minimums make the whole tab scroll instead of squashing it. */
+#v-monitor .grid{height:100%;grid-template-rows:minmax(250px,1.3fr) minmax(200px,1fr);align-content:stretch}
+#v-monitor .grid>.pan{display:flex;flex-direction:column;overflow:hidden}
+#v-monitor .grid>.pan>h4{flex:none}
+#v-monitor .pbody{flex:1;min-height:0;display:flex;flex-direction:column;overflow:auto;margin:0 -8px;padding:0 8px 2px}
+#v-monitor .pbody>*{flex:none}
+#v-monitor .pbody>.chwrap,#v-monitor .pbody .chwrap.tall{flex:1 1 0;height:auto;min-height:60px}
+#v-monitor .pbody>.chwrap.sm{flex:1 1 0;height:auto;min-height:44px}
+#v-monitor .pbody>.mnote{margin-top:auto;padding-top:10px}
+#v-monitor .pbody>.mnote:not(:first-child){margin-top:12px}
+
+/* processor: usage + status on top; cores, top users and spec sheet below */
+#v-monitor .g-cpu>:nth-child(3){grid-column:auto}
+#v-monitor .g-cpu>:nth-child(5){grid-column:auto}
+#v-monitor .g-cpu>:nth-child(5) .spec{grid-template-columns:auto 1fr;column-gap:var(--sp-md)}
+#v-monitor .g-cpu>:nth-child(5) .spec dd{text-align:right}
+#v-monitor .g-cpu .stats{flex:1;align-content:space-around}
+#v-monitor .cores{flex:1 1 0;min-height:90px;gap:var(--sp-md)}
+#v-monitor .cg{min-height:0}
+#v-monitor .cg:first-child{flex:2} #v-monitor .cg:last-child{flex:1.05}
+#v-monitor .pc,#v-monitor .ec{flex:1;min-height:0;grid-template-rows:minmax(0,1fr);gap:5px}
+#v-monitor .core{min-height:0}
+#v-monitor .core:not(.e){grid-template-rows:minmax(0,1fr) auto;row-gap:6px}
+#v-monitor .core .th{height:auto;min-height:26px;flex:1}
+
+/* graphics: gauge and data on the left, chart on the right */
+#v-monitor .g-gpu>:nth-child(1){grid-row:auto}
+#v-monitor .g-gpu>:nth-child(4){grid-column:auto}
+#v-monitor .gsplit{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:var(--sp-xl)}
+#v-monitor .gsplit .gl{display:flex;flex-direction:column;justify-content:safe center;min-height:0;overflow-y:auto;scrollbar-width:thin;padding-top:2px}
+#v-monitor .gsplit .gr{display:flex;flex-direction:column;min-height:0}
+#v-monitor .gsplit .gr .chwrap{flex:1 1 0;height:auto;min-height:60px;margin-top:8px}
+#v-monitor .g-gpu .gauge{width:124px;height:124px}
+#v-monitor .g-gpu .gauge .gv b{font-size:var(--fs-n2)}
+#v-monitor .gpuhero{gap:var(--sp-lg)}
+#v-monitor .gpuhero .stats.s4{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-md) var(--sp-md)}
+#v-monitor .g-gpu .vram{margin-top:14px}
+
+/* memory and disks: the chart fills the large panel */
+#v-monitor .g-mem .stats,#v-monitor .g-disk .stats{align-content:space-around}
+#v-monitor .g-mem>:nth-child(3) .pbody{justify-content:center}
+
+/* battery: two panels on top, the 24 h chart below */
+#v-monitor .g-bat{grid-template-rows:minmax(230px,auto) minmax(190px,1fr)}
+#v-monitor .g-bat>:nth-child(1) .pbody{justify-content:space-around}
+#v-monitor .g-bat .batrow{margin-bottom:0}
+
+/* health: full-width summary on top and three columns below */
+#v-monitor .g-health{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto minmax(220px,1fr)}
+#v-monitor .g-health>.allok{grid-column:1/-1}
+#v-monitor .g-health>.pan:nth-child(4){grid-column:auto}
+#v-monitor .g-health .rows{margin-bottom:14px}
+#v-monitor .g-health .maxt{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-sm)}
+#v-monitor .g-health .maxt div{padding:10px}
+#v-monitor .g-health .maxt b{font-size:var(--fs-h2)}
+#v-monitor .g-health .row .rt span{white-space:normal}
+#v-monitor .g-health .events{gap:2px}
+
+/* initials tiles always centered */
+#v-monitor .mono{line-height:1;padding:0}
+@media (max-width:1180px){
+  #v-monitor .grid{height:auto;grid-template-rows:none;grid-auto-rows:minmax(220px,auto)}
+  #v-monitor .gsplit{grid-template-columns:1fr}
+}
+#v-monitor .core{align-items:stretch}
+#v-monitor .core span{text-align:center}
+#v-monitor .g-health>.allok{flex-direction:row}
+#v-monitor .dnsl{margin-top:14px;display:flex;flex-direction:column;gap:var(--sp-sm)}
+#v-monitor .dnsl>span{font-size:var(--fs-sm);color:var(--faint)}
+#v-monitor .dnsr{display:grid;grid-template-columns:96px 1fr 52px;gap:var(--sp-sm);align-items:center;font-size:var(--fs-sm)}
+#v-monitor .dnsr em{font-style:normal;text-align:right;color:var(--mute)}
+#v-monitor .dnsr .bar{height:5px}
+#v-monitor .dnsr.best b{color:var(--ok)}
+#v-monitor .dnsr b{font-weight:500}
+#v-monitor .g-cpu .stats{gap:6px var(--sp-md)}
+#v-monitor .g-cpu .st b{font-size:var(--fs-h2)}
+#v-monitor .pbody h4{font-size:var(--fs-sm);font-weight:500;color:var(--mute);display:flex;align-items:center;gap:var(--sp-sm);margin:4px 0 10px}
+#v-monitor .pbody .row .rt span{white-space:normal}
+
+/* ---------- real data ---------- */
+/* real program icon inside its tile */
+#v-monitor .mono.img{background:none;border-color:transparent;padding:0}
+#v-monitor .mono.img img{width:100%;height:100%;object-fit:contain;display:block}
+#v-monitor .ov .tp .mono.img img{width:20px;height:20px;margin:auto}
+/* a value Windows does not provide */
+#v-monitor .na{color:var(--faint);cursor:help}
+/* health with warnings */
+#v-monitor .allok .warnmark{width:64px;height:64px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--warn);background:color-mix(in oklab,var(--warn) 12%,transparent);border:1.5px solid color-mix(in oklab,var(--warn) 45%,transparent)}
+#v-monitor .allok .warnmark svg{width:var(--ic-3xl);height:var(--ic-3xl)}
+#v-monitor .allok.warn h3{color:var(--warn)}
+/* process table: rows out of view are not painted (smooth scrolling with 150+ programs) */
+#v-monitor .pr{content-visibility:auto;contain-intrinsic-size:auto 46px}
+
+/* graphics: integrated GPU usage (PDH, per adapter) and the dedicated GPU's power state */
+#v-monitor .igu{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--sp-md)}
+#v-monitor .igu .big{font-size:var(--fs-n2)}
+#v-monitor .igu .chwrap.sm{height:64px;margin-top:0}
+#v-monitor .gstate{margin-top:12px;border-color:color-mix(in srgb,var(--accent2) 35%,var(--line))}

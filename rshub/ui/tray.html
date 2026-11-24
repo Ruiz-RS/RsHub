@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" data-theme="deep">
+<head>
+<meta charset="utf-8">
+<title>RsHub</title>
+<link rel="stylesheet" href="css/base.css">
+<style>
+  html,body{background:var(--void);overflow:hidden}
+  body{font-size:12.5px;cursor:default;user-select:none}
+  /* no border of its own: Windows draws the edge and rounded corners */
+  .p{position:fixed;inset:0;display:flex;flex-direction:column;padding:14px 14px 12px;gap:12px;
+     background:radial-gradient(360px 160px at 100% 0%, color-mix(in oklab,var(--accent2) 11%,transparent), transparent 70%),
+                radial-gradient(300px 150px at 0% 100%, color-mix(in oklab,var(--accent) 9%,transparent), transparent 70%),var(--void)}
+  .hd{display:flex;align-items:center;gap:9px}
+  .hd svg.logo{width:22px;height:22px;flex:none}
+  .hd b{font:500 14px var(--display);letter-spacing:-.01em}
+  .hd .sp{flex:1}
+  .mode{display:flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:12px;border:1px solid var(--line2);font-size:11px;color:var(--mute);white-space:nowrap}
+  .mode i{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .mode.admin{border-color:color-mix(in oklab,var(--accent) 60%,transparent);color:var(--ink)}
+  .mode.admin i{background:var(--accent);box-shadow:0 0 0 3px var(--acc-soft)}
+  /* live numbers */
+  .vit{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .vt{position:relative;padding:8px 9px 9px;border-radius:11px;background:var(--raise);overflow:hidden}
+  .vt span{display:block;font-size:10.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vt b{display:block;font:500 16px/1.15 var(--display);margin-top:3px;white-space:nowrap}
+  .vt b small{font:400 10px var(--text);color:var(--faint);margin-left:2px}
+  .vt .bar{position:absolute;left:9px;right:9px;bottom:5px;height:2px;border-radius:2px;background:var(--line)}
+  .vt .bar u{position:absolute;inset:0;border-radius:inherit;background:var(--accent2);transform-origin:0 50%;transform:scaleX(var(--v,0));will-change:transform;transition:transform calc(500ms*var(--f)) cubic-bezier(.2,.8,.2,1)}
+  .vt.hot .bar u{background:var(--warn)}
+  /* modules */
+  .cap{display:flex;align-items:center;justify-content:space-between;color:var(--faint);font-size:11px;height:14px}
+  .cap em{font-style:normal;color:var(--ink);transition:opacity calc(140ms*var(--f))}
+  .mods{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+  .mods button{height:44px;border-radius:11px;display:grid;place-items:center;color:var(--mute);
+     transition:background-color calc(150ms*var(--f)),color calc(150ms*var(--f)),transform calc(240ms*var(--f)) var(--e-snap)}
+  .mods button:hover{background:var(--raise2);color:var(--ink);transform:translateY(-2px)}
+  .mods button:active{transform:scale(.94)}
+  .mods svg{width:19px;height:19px}
+  /* quick actions */
+  .qa{display:flex;flex-direction:column;gap:2px}
+  .qa button{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:9px;color:var(--mute);text-align:left;
+     transition:background-color calc(150ms*var(--f)),color calc(150ms*var(--f))}
+  .qa button:hover{background:var(--raise2);color:var(--ink)}
+  .qa button svg{width:16px;height:16px;flex:none}
+  .qa button>span:not(.toggle){flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .qa .toggle{display:inline-block;flex:none;width:42px;height:24px;transform:scale(.8);transform-origin:right center}
+  .ft{margin-top:auto;display:flex;gap:6px}
+  .ft .open{flex:1;height:36px;border-radius:11px;background:var(--accent);color:#1a0d0b;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;
+     transition:filter calc(150ms*var(--f)),transform calc(240ms*var(--f)) var(--e-snap)}
+  .ft .open:hover{filter:brightness(1.07)}
+  .ft .open:active{transform:scale(.97)}
+  .ft .ico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:var(--mute);background:var(--raise);
+     transition:background-color calc(150ms*var(--f)),color calc(150ms*var(--f))}
+  .ft .ico:hover{background:var(--raise2);color:var(--ink)}
+  .ft .ico.quit:hover{color:var(--warn)}
+  .ft svg{width:16px;height:16px}
+</style>
+</head>
+<body>
+<div class="p" id="p">
+  <div class="hd">
+    <img src="img/logo_emblem.png" class="logo" alt="RsHub" style="width:22px;height:22px;object-fit:contain;">
+    <b>RsHub</b><span class="sp"></span><span class="mode" id="mode"><i></i><span id="modeTxt"></span></span>
+  </div>
+  <div class="vit" id="vit"></div>
+  <div>
+    <div class="cap"><span id="capL"></span><em id="capM"></em></div>
+    <div class="mods" id="mods"></div>
+  </div>
+  <div class="qa" id="qa"></div>
+  <div class="ft">
+    <button class="open" id="open"></button>
+    <button class="ico" id="settings"></button>
+    <button class="ico quit" id="quit"></button>
+  </div>
+</div>
+<script src="js/i18n.js"></script>
+<script src="js/core.js"></script>
+<script src="js/telemetry.js"></script>
+<script src="js/tray-panel.js"></script>
+</body>
+</html>
