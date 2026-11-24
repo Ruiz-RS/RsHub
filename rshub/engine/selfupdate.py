@@ -67,7 +67,7 @@ TASK = r"RsHub\Update"
 # `python tools/release_sign.py keygen`. To rotate: add the new key HERE, release it signed with the old one, and
 # only later drop the old key.
 TRUSTED_KEYS = [
-    "cd88f316f9852616bee4a48ee1863dd821f0b9f686ea15b4758798b518fe88d7",  # Esteban Arosemena, release key 1 (2026-11-20)
+    "cd88f316f9852616bee4a48ee1863dd821f0b9f686ea15b4758798b518fe88d7",  # Ruiz Salazar, release key 1 (2026-11-20)
 ]
 ASSET_RE = re.compile(r"^RsHub-Setup-(\d+(?:\.\d+){1,3})\.exe$", re.I)
 PORTABLE_RE = re.compile(r"^RsHub-Portable-(\d+(?:\.\d+){1,3})\.zip$", re.I)

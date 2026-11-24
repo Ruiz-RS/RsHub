@@ -146,11 +146,11 @@ def version_file():
                     date=(0, 0)),
   kids=[
     StringFileInfo([StringTable('040904B0', [
-      StringStruct('CompanyName', 'Esteban Arosemena'),
+      StringStruct('CompanyName', 'Ruiz Salazar'),
       StringStruct('FileDescription', 'RsHub'),
       StringStruct('FileVersion', '{VERSION}'),
       StringStruct('InternalName', 'RsHub'),
-      StringStruct('LegalCopyright', 'Copyright (C) Esteban Arosemena. Licensed under the GNU GPL v3.'),
+      StringStruct('LegalCopyright', 'Copyright (C) Ruiz Salazar. Licensed under the GNU GPL v3.'),
       StringStruct('OriginalFilename', 'RsHub.exe'),
       StringStruct('ProductName', 'RsHub'),
       StringStruct('ProductVersion', '{VERSION}')])]),

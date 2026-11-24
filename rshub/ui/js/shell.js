@@ -568,7 +568,7 @@ function sectionHTML(id) {
       ${tog('autoUpdateFeatures', t('Install new features automatically'), t('Versions with new features (like 1.2.0) download in the background and install the next time you open RsHub. Turn it off to choose each time.'))}`;
     case 'about': return `<div class="about-h"><img src="img/logo_emblem.png" alt="RsHub" style="width:38px;height:38px;object-fit:contain;image-rendering:-webkit-optimize-contrast;margin-right:12px;">
         <div><h3>RsHub</h3><p>${t('Version {v}. The control center for your PC.', { v: state.version + (state.portable ? ' ' + t('(portable)') : '') })}</p></div></div>
-      <div class="set inline"><div class="lbl"><div>${t('Created by')}<span>Ruiz y Antigravity IDE</span></div></div></div>
+      <div class="set inline"><div class="lbl"><div>${t('Created by')}<span>Ruiz Salazar y Antigravity IDE</span></div></div></div>
       <div class="set inline"><div class="lbl"><div>${t('Source code')}<span>${t('Free software under the GNU GPLv3 license.')} github.com/Ruiz-RS/RsHub</span></div></div><button class="btn sec" data-act="github">${ic('external')}${t('Open in GitHub')}</button></div>
       <div class="set"><div class="lbl"><div>${t('Languages')}<span>${t('How much code there is in each.')}</span></div></div><div id="langs" class="langs"><div class="sk" style="height:10px"></div></div></div>
       <div class="set inline"><div class="lbl"><div>${t('Sounds')}<span>${t('Orbital, an original set made for RsHub (CC0). The soft hover sound is based on “UI hover” by unfa on Freesound (CC0).')}</span></div></div><button class="btn sec" data-act="freesound">${ic('external')}Freesound</button></div>

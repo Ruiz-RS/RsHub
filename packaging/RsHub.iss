@@ -38,11 +38,11 @@ AppId={{0F1795D8-7D52-45CC-8518-7A1E4E76E43E}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
-AppPublisher=Esteban Arosemena
+AppPublisher=Ruiz Salazar
 AppPublisherURL={#AppUrl}
 AppSupportURL={#AppUrl}/issues
 AppUpdatesURL={#AppUrl}/releases
-AppCopyright=Copyright (C) Esteban Arosemena. GNU GPL v3.
+AppCopyright=Copyright (C) Ruiz Salazar. GNU GPL v3.
 AppComments=The control center for your Windows PC.
 
 DefaultDirName={autopf}\{#AppName}
@@ -91,11 +91,11 @@ RestartApplications=no
 SetupLogging=yes
 
 VersionInfoVersion={#AppVersion}
-VersionInfoCompany=Esteban Arosemena
+VersionInfoCompany=Ruiz Salazar
 VersionInfoDescription={#AppName} Setup
 VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppVersion}
-VersionInfoCopyright=Copyright (C) Esteban Arosemena
+VersionInfoCopyright=Copyright (C) Ruiz Salazar
 
 [Languages]
 ; the language codes the app uses for each one are in AppLangOf, in [Code]

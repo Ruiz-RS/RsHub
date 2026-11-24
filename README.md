@@ -208,7 +208,7 @@ RsHub funciona de forma totalmente local: **no tiene cuentas, ni telemetría, ni
 ## 🔏 Política de firma de código
 
 Las versiones publicadas se compilan de manera reproducible mediante GitHub Actions desde este repositorio oficial ([`.github/workflows/build.yml`](.github/workflows/build.yml)).
-- **Mantenedor y revisor:** [Ruiz-RS](https://github.com/Ruiz-RS)
+- **Mantenedor y revisor:** [Ruiz Salazar (Ruiz-RS)](https://github.com/Ruiz-RS)
 - **Aprobaciones:** Cada versión es verificada manualmente antes de su distribución.
 - **Privacidad y transparencia:** Consulta [PRIVACY.md](PRIVACY.md).
 
@@ -237,7 +237,7 @@ Las sugerencias, reportes de errores y propuestas de mejora son bienvenidas. Pue
 
 ## 📜 Licencia y créditos
 
-Creado por **Ruiz** y **Antigravity IDE**.
+Creado por **Ruiz Salazar** y **Antigravity IDE**.
 
 RsHub es software libre: puedes redistribuirlo y/o modificarlo bajo los términos de la **Licencia Pública General GNU v3.0**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
 
