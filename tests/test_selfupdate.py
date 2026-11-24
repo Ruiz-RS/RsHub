@@ -116,8 +116,8 @@ class Manifest(unittest.TestCase):
         self.assertTrue(self.ok())
 
     def test_wrong_version_name_or_hash_is_refused(self):
-        self.assertFalse(self.ok(ver="2.1.1"))  # an old signed file passed off as a newer version
-        self.assertFalse(self.ok(name="RsHub-Setup-2.1.1.exe"))
+        self.assertFalse(self.ok(ver="1.0"))  # an old signed file passed off as a newer version
+        self.assertFalse(self.ok(name="RsHub-Setup-1.0.exe"))
         self.assertFalse(self.ok(sha=hashlib.sha256(b"tampered").hexdigest()))
 
     def test_unknown_key_or_no_keys_is_refused(self):

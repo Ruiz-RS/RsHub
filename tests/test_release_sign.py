@@ -42,7 +42,7 @@ class ReleaseTool(unittest.TestCase):
         run("sign", f, "--version", "2.1.0")
         self.assertEqual(os.path.getsize(f + ".sig"), 64)
         self.assertEqual(run("verify", f, f + ".sig", "--version", "2.1.0", "--pubkey", pub)[0], 0)
-        self.assertEqual(run("verify", f, f + ".sig", "--version", "2.1.1", "--pubkey", pub)[0], 1)
+        self.assertEqual(run("verify", f, f + ".sig", "--version", "1.0", "--pubkey", pub)[0], 1)
         with open(f, "ab") as fh:
             fh.write(b"!")
         self.assertEqual(run("verify", f, f + ".sig", "--version", "2.1.0", "--pubkey", pub)[0], 1)

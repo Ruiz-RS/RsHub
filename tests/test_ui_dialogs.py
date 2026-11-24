@@ -448,7 +448,7 @@ class Dialogs(unittest.TestCase):
           let box = null, running = false, last = null; const log = [], paintSettings = noop;
           const state = { settings: { autoUpdate: true, autoUpdateFeatures: true } };
           const kindOf = (a, b) => a.split('.')[1] !== b.split('.')[1] ? 'minor' : 'patch';
-          const ask = async () => ({ ok: true, newer: true, current: '2.1.1', latest: '2.2.0', mode: 'direct' });
+          const ask = async () => ({ ok: true, newer: true, current: '1.0', latest: '1.1', mode: 'direct' });
           const open = () => log.push('open');
           """ + parts + r"""
           /* the ten-minute wait: kept aside and run on demand */

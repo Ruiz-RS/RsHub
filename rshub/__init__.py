@@ -1,3 +1,3 @@
 """RsHub: the control center for your PC."""
-VERSION = "2.1.1"
+VERSION = "1.0"
 CODENAME = ""  # codename removed
